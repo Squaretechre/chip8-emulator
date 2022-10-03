@@ -65,9 +65,7 @@ public class Chip8Should
             }
             if (Regex.IsMatch(instructionHexString, "3..."))
             {
-                var instructionBytes = BitConverter.GetBytes(instruction).Reverse().ToArray();
-                var upperByte = instructionBytes[0];
-                var valueToCompare = instructionBytes[1];
+                var (upperByte, valueToCompare) = GetBytesFor(instruction);
                 
                 var register = upperByte & 0x0F;
 
@@ -77,9 +75,7 @@ public class Chip8Should
             }
             if (Regex.IsMatch(instructionHexString, "4..."))
             {
-                var instructionBytes = BitConverter.GetBytes(instruction).Reverse().ToArray();
-                var upperByte = instructionBytes[0];
-                var valueToCompare = instructionBytes[1];
+                var (upperByte, valueToCompare) = GetBytesFor(instruction);
                 
                 var register = upperByte & 0x0F;
 
@@ -89,10 +85,8 @@ public class Chip8Should
             }
             if (Regex.IsMatch(instructionHexString, "5..0"))
             {
-                var instructionBytes = BitConverter.GetBytes(instruction).Reverse().ToArray();
-                var upperByte = instructionBytes[0];
-                var lowerByte = instructionBytes[1];
-                
+                var (upperByte, lowerByte) = GetBytesFor(instruction);
+
                 var register1 = upperByte & 0x0F;
                 var register2 = lowerByte >> 4;
 
@@ -108,6 +102,14 @@ public class Chip8Should
             {
                 PC = (instruction & 0xFFF) + V[0];
             }
+        }
+
+        private static Tuple<byte, byte> GetBytesFor(short instruction)
+        {
+            var instructionBytes = BitConverter.GetBytes(instruction).Reverse().ToArray();
+            var upperByte = instructionBytes[0];
+            var lowerByte = instructionBytes[1];
+            return new Tuple<byte, byte>(upperByte, lowerByte);
         }
     }
     
