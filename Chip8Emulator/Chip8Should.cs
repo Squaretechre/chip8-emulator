@@ -85,6 +85,14 @@ public class Chip8Should
 
                 PC += 2;
             }
+            if (Regex.IsMatch(instructionHexString, "6..."))
+            {
+                var (upperByte, value) = GetBytesFor(instruction);
+
+                var register = upperByte & 0x0F;
+                
+                V[register] = value;
+            }
             if (Regex.IsMatch(instructionHexString, "A..."))
             {
                 I = instruction & 0xFFF;
@@ -160,7 +168,7 @@ public class Chip8Should
     [Fact(DisplayName = "3xkk - SE Vx, byte - Skip next instruction if Vx = kk. ✅ Positive.")]
     public void increment_the_program_counter_by_2_when_vx_matches_value_kk_for_instruction_3xkk()
     {
-        var registers = new int[15];
+        var registers = new int[16];
         
         registers[3] = 64;
         
@@ -176,7 +184,7 @@ public class Chip8Should
     [Fact(DisplayName = "3xkk - SE Vx, byte - Skip next instruction if Vx = kk. ❌ Negative.")]
     public void not_increment_the_program_counter_by_2_when_vx_does_not_match_value_kk_for_instruction_3xkk()
     {
-        var registers = new int[15];
+        var registers = new int[16];
         
         registers[3] = 63;
         
@@ -192,7 +200,7 @@ public class Chip8Should
     [Fact(DisplayName = "4xkk - SNE Vx, byte - Skip next instruction if Vx != kk. ✅ Positive.")]
     public void increment_the_program_counter_by_2_when_vx_does_not_matches_value_kk_for_instruction_4xkk()
     {
-        var registers = new int[15];
+        var registers = new int[16];
         
         registers[9] = 25;
         
@@ -208,7 +216,7 @@ public class Chip8Should
     [Fact(DisplayName = "4xkk - SNE Vx, byte - Skip next instruction if Vx != kk. ❌ Negative.")]
     public void not_increment_the_program_counter_by_2_when_vx_does_match_value_kk_for_instruction_4xkk()
     {
-        var registers = new int[15];
+        var registers = new int[16];
         
         registers[9] = 24;
         
@@ -224,7 +232,7 @@ public class Chip8Should
     [Fact(DisplayName = "5xy0 - SE Vx, Vy - Skip next instruction if Vx = Vy. ✅ Positive.")]
     public void increment_the_program_counter_by_2_when_vx_equals_vy_for_instruction_5xy0()
     {
-        var registers = new int[15];
+        var registers = new int[16];
         
         registers[2] = 100;
         registers[10] = 100;
@@ -241,7 +249,7 @@ public class Chip8Should
     [Fact(DisplayName = "5xy0 - SE Vx, Vy - Skip next instruction if Vx = Vy. ❌ Negative.")]
     public void not_increment_the_program_counter_by_2_when_vx_does_not_equal_vy_for_instruction_5xy0()
     {
-        var registers = new int[15];
+        var registers = new int[16];
         
         registers[2] = 99;
         registers[10] = 100;
@@ -253,6 +261,65 @@ public class Chip8Should
         sut.ReadInstruction(instruction);
         
         Assert.Equal(500, sut.PC);
+    }
+    
+    [Fact(DisplayName = "6xkk - LD Vx, byte - Set Vx = kk.")]
+    public void process_instruction_6xkk()
+    {
+        var registers = new int[16];
+
+        var instructionForRegister0 = Convert.ToInt16("0x601A", 16);
+        var instructionForRegister1 = Convert.ToInt16("0x6176", 16);
+        var instructionForRegister2 = Convert.ToInt16("0x6207", 16);
+        var instructionForRegister3 = Convert.ToInt16("0x6311", 16);
+        var instructionForRegister4 = Convert.ToInt16("0x6428", 16);
+        var instructionForRegister5 = Convert.ToInt16("0x6560", 16);
+        var instructionForRegister6 = Convert.ToInt16("0x6635", 16);
+        var instructionForRegister7 = Convert.ToInt16("0x6715", 16);
+        var instructionForRegister8 = Convert.ToInt16("0x682E", 16);
+        var instructionForRegister9 = Convert.ToInt16("0x6964", 16);
+        var instructionForRegister10 = Convert.ToInt16("0x6A01", 16);
+        var instructionForRegister11 = Convert.ToInt16("0x6B02", 16);
+        var instructionForRegister12 = Convert.ToInt16("0x6C03", 16);
+        var instructionForRegister13 = Convert.ToInt16("0x6D04", 16);
+        var instructionForRegister14 = Convert.ToInt16("0x6E05", 16);
+        var instructionForRegister15 = Convert.ToInt16("0x6F06", 16);
+ 
+        var sut = new Chip8(registers, 500, _testOutputHelper);
+        
+        sut.ReadInstruction(instructionForRegister0);
+        sut.ReadInstruction(instructionForRegister1);
+        sut.ReadInstruction(instructionForRegister2);
+        sut.ReadInstruction(instructionForRegister3);
+        sut.ReadInstruction(instructionForRegister4);
+        sut.ReadInstruction(instructionForRegister5);
+        sut.ReadInstruction(instructionForRegister6);
+        sut.ReadInstruction(instructionForRegister7);
+        sut.ReadInstruction(instructionForRegister8);
+        sut.ReadInstruction(instructionForRegister9);
+        sut.ReadInstruction(instructionForRegister10);
+        sut.ReadInstruction(instructionForRegister11);
+        sut.ReadInstruction(instructionForRegister12);
+        sut.ReadInstruction(instructionForRegister13);
+        sut.ReadInstruction(instructionForRegister14);
+        sut.ReadInstruction(instructionForRegister15);
+        
+        Assert.Equal(26, sut.V[0]);
+        Assert.Equal(118, sut.V[1]);
+        Assert.Equal(7, sut.V[2]);
+        Assert.Equal(17, sut.V[3]);
+        Assert.Equal(40, sut.V[4]);
+        Assert.Equal(96, sut.V[5]);
+        Assert.Equal(53, sut.V[6]);
+        Assert.Equal(21, sut.V[7]);
+        Assert.Equal(46, sut.V[8]);
+        Assert.Equal(100, sut.V[9]);
+        Assert.Equal(1, sut.V[10]);
+        Assert.Equal(2, sut.V[11]);
+        Assert.Equal(3, sut.V[12]);
+        Assert.Equal(4, sut.V[13]);
+        Assert.Equal(5, sut.V[14]);
+        Assert.Equal(6, sut.V[15]);
     }
 
     [Fact(DisplayName = "Annn - LD I, addr - Set I = nnn.")]
@@ -270,7 +337,7 @@ public class Chip8Should
     [Fact(DisplayName = "Bnnn - JP V0, addr - Jump to location nnn + V0.")]
     public void process_instruction_bnnn()
     {
-        var registers = new int[15];
+        var registers = new int[16];
         
         registers[0] = 10;
         
