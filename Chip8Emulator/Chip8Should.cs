@@ -63,6 +63,18 @@ public class Chip8Should
                 Stack.Push(PC);
                 PC = instruction & 0xFFF;
             }
+            if (Regex.IsMatch(instructionHexString, "3..."))
+            {
+                var instructionBytes = BitConverter.GetBytes(instruction).Reverse().ToArray();
+                var upperByte = instructionBytes[0];
+                var valueToCompare = instructionBytes[1];
+                
+                var register = upperByte & 0x0F;
+
+                if (V[register] != valueToCompare) return;
+
+                PC += 2;
+            }
             if (Regex.IsMatch(instructionHexString, "A..."))
             {
                 I = instruction & 0xFFF;
@@ -125,6 +137,38 @@ public class Chip8Should
         
         Assert.Equal(806, sut.PC);
         Assert.Equal(520, sut.Stack.Peek());
+    }
+    
+    [Fact(DisplayName = "3xkk - SE Vx, byte - Skip next instruction if Vx = kk. ✅ Positive.")]
+    public void increment_the_program_counter_by_2_when_vx_matches_value_kk()
+    {
+        var registers = new int[15];
+        
+        registers[3] = 64;
+        
+        var instruction = Convert.ToInt16("0x3340", 16);
+    
+        var sut = new Chip8(registers, 500, _testOutputHelper);
+        
+        sut.ReadInstruction(instruction);
+        
+        Assert.Equal(502, sut.PC);
+    }
+    
+    [Fact(DisplayName = "3xkk - SE Vx, byte - Skip next instruction if Vx = kk. ❌ Negative.")]
+    public void not_increment_the_program_counter_by_2_when_vx_does_not_match_value_kk()
+    {
+        var registers = new int[15];
+        
+        registers[3] = 63;
+        
+        var instruction = Convert.ToInt16("0x3340", 16);
+    
+        var sut = new Chip8(registers, 500, _testOutputHelper);
+        
+        sut.ReadInstruction(instruction);
+        
+        Assert.Equal(500, sut.PC);
     }
 
     [Fact(DisplayName = "Annn - LD I, addr - Set I = nnn.")]
