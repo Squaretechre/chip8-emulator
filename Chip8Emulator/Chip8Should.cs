@@ -30,7 +30,7 @@ public class Chip8Should
 
         public Stack<int> Stack { get; }
 
-        public void ReadInstruction(short instruction)
+        public void ProcessInstruction(short instruction)
         {
             var instructionBytesFromShort = BitConverter
                 .GetBytes(instruction)
@@ -137,12 +137,12 @@ public class Chip8Should
         
         var sut = new Chip8(Array.Empty<int>(), initialProgramCounterLocation, _testOutputHelper);
         
-        sut.ReadInstruction(callSubroutineInstruction);
+        sut.ProcessInstruction(callSubroutineInstruction);
         
         Assert.Equal(806, sut.PC);
         Assert.Equal(500, sut.Stack.Peek());
 
-        sut.ReadInstruction(returnFromSubroutineInstruction);
+        sut.ProcessInstruction(returnFromSubroutineInstruction);
        
         Assert.Equal(initialProgramCounterLocation, sut.PC);
         Assert.True(IsEmpty(sut.Stack));
@@ -155,7 +155,7 @@ public class Chip8Should
 
         var sut = new Chip8(Array.Empty<int>(), 500, _testOutputHelper);
         
-        sut.ReadInstruction(instruction);
+        sut.ProcessInstruction(instruction);
         
         Assert.Equal(535, sut.PC);
     }
@@ -167,7 +167,7 @@ public class Chip8Should
     
         var sut = new Chip8(Array.Empty<int>(), 520, _testOutputHelper);
         
-        sut.ReadInstruction(instruction);
+        sut.ProcessInstruction(instruction);
         
         Assert.Equal(806, sut.PC);
         Assert.Equal(520, sut.Stack.Peek());
@@ -184,7 +184,7 @@ public class Chip8Should
     
         var sut = new Chip8(registers, 500, _testOutputHelper);
         
-        sut.ReadInstruction(instruction);
+        sut.ProcessInstruction(instruction);
         
         Assert.Equal(502, sut.PC);
     }
@@ -200,7 +200,7 @@ public class Chip8Should
     
         var sut = new Chip8(registers, 500, _testOutputHelper);
         
-        sut.ReadInstruction(instruction);
+        sut.ProcessInstruction(instruction);
         
         Assert.Equal(500, sut.PC);
     }
@@ -216,7 +216,7 @@ public class Chip8Should
     
         var sut = new Chip8(registers, 500, _testOutputHelper);
         
-        sut.ReadInstruction(instruction);
+        sut.ProcessInstruction(instruction);
         
         Assert.Equal(502, sut.PC);
     }
@@ -232,7 +232,7 @@ public class Chip8Should
     
         var sut = new Chip8(registers, 500, _testOutputHelper);
         
-        sut.ReadInstruction(instruction);
+        sut.ProcessInstruction(instruction);
         
         Assert.Equal(500, sut.PC);
     }
@@ -249,7 +249,7 @@ public class Chip8Should
     
         var sut = new Chip8(registers, 500, _testOutputHelper);
         
-        sut.ReadInstruction(instruction);
+        sut.ProcessInstruction(instruction);
         
         Assert.Equal(502, sut.PC);
     }
@@ -266,7 +266,7 @@ public class Chip8Should
     
         var sut = new Chip8(registers, 500, _testOutputHelper);
         
-        sut.ReadInstruction(instruction);
+        sut.ProcessInstruction(instruction);
         
         Assert.Equal(500, sut.PC);
     }
@@ -295,22 +295,22 @@ public class Chip8Should
  
         var sut = new Chip8(registers, 500, _testOutputHelper);
         
-        sut.ReadInstruction(instructionForRegister0);
-        sut.ReadInstruction(instructionForRegister1);
-        sut.ReadInstruction(instructionForRegister2);
-        sut.ReadInstruction(instructionForRegister3);
-        sut.ReadInstruction(instructionForRegister4);
-        sut.ReadInstruction(instructionForRegister5);
-        sut.ReadInstruction(instructionForRegister6);
-        sut.ReadInstruction(instructionForRegister7);
-        sut.ReadInstruction(instructionForRegister8);
-        sut.ReadInstruction(instructionForRegister9);
-        sut.ReadInstruction(instructionForRegister10);
-        sut.ReadInstruction(instructionForRegister11);
-        sut.ReadInstruction(instructionForRegister12);
-        sut.ReadInstruction(instructionForRegister13);
-        sut.ReadInstruction(instructionForRegister14);
-        sut.ReadInstruction(instructionForRegister15);
+        sut.ProcessInstruction(instructionForRegister0);
+        sut.ProcessInstruction(instructionForRegister1);
+        sut.ProcessInstruction(instructionForRegister2);
+        sut.ProcessInstruction(instructionForRegister3);
+        sut.ProcessInstruction(instructionForRegister4);
+        sut.ProcessInstruction(instructionForRegister5);
+        sut.ProcessInstruction(instructionForRegister6);
+        sut.ProcessInstruction(instructionForRegister7);
+        sut.ProcessInstruction(instructionForRegister8);
+        sut.ProcessInstruction(instructionForRegister9);
+        sut.ProcessInstruction(instructionForRegister10);
+        sut.ProcessInstruction(instructionForRegister11);
+        sut.ProcessInstruction(instructionForRegister12);
+        sut.ProcessInstruction(instructionForRegister13);
+        sut.ProcessInstruction(instructionForRegister14);
+        sut.ProcessInstruction(instructionForRegister15);
         
         Assert.Equal(26, sut.V[0]);
         Assert.Equal(118, sut.V[1]);
@@ -345,9 +345,9 @@ public class Chip8Should
     
         var sut = new Chip8(registers, 500, _testOutputHelper);
         
-        sut.ReadInstruction(add5ToRegister0);
-        sut.ReadInstruction(add1ToRegister10);
-        sut.ReadInstruction(add3ToRegister16);
+        sut.ProcessInstruction(add5ToRegister0);
+        sut.ProcessInstruction(add1ToRegister10);
+        sut.ProcessInstruction(add3ToRegister16);
         
         Assert.Equal(15, sut.V[0]);
         Assert.Equal(21, sut.V[10]);
@@ -361,7 +361,7 @@ public class Chip8Should
 
         var sut = new Chip8(Array.Empty<int>(), 500, _testOutputHelper);
         
-        sut.ReadInstruction(instruction);
+        sut.ProcessInstruction(instruction);
         
         Assert.Equal(692, sut.I);
     }
@@ -377,7 +377,7 @@ public class Chip8Should
 
         var sut = new Chip8(registers, 500, _testOutputHelper);
         
-        sut.ReadInstruction(instruction);
+        sut.ProcessInstruction(instruction);
         
         Assert.Equal(585, sut.PC);
     }
