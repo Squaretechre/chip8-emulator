@@ -87,6 +87,19 @@ public class Chip8Should
 
                 PC += 2;
             }
+            if (Regex.IsMatch(instructionHexString, "5..0"))
+            {
+                var instructionBytes = BitConverter.GetBytes(instruction).Reverse().ToArray();
+                var upperByte = instructionBytes[0];
+                var lowerByte = instructionBytes[1];
+                
+                var register1 = upperByte & 0x0F;
+                var register2 = lowerByte >> 4;
+
+                if (V[register1] != V[register2]) return;
+
+                PC += 2;
+            }
             if (Regex.IsMatch(instructionHexString, "A..."))
             {
                 I = instruction & 0xFFF;
@@ -214,6 +227,40 @@ public class Chip8Should
         
         Assert.Equal(500, sut.PC);
     }
+    
+    [Fact(DisplayName = "5xy0 - SE Vx, Vy - Skip next instruction if Vx = Vy. ✅ Positive.")]
+    public void increment_the_program_counter_by_2_when_vx_equals_vy_for_instruction_5xy0()
+    {
+        var registers = new int[15];
+        
+        registers[2] = 100;
+        registers[10] = 100;
+        
+        var instruction = Convert.ToInt16("0x5A20", 16);
+    
+        var sut = new Chip8(registers, 500, _testOutputHelper);
+        
+        sut.ReadInstruction(instruction);
+        
+        Assert.Equal(502, sut.PC);
+    }
+    
+    [Fact(DisplayName = "5xy0 - SE Vx, Vy - Skip next instruction if Vx = Vy. ❌ Negative.")]
+    public void not_increment_the_program_counter_by_2_when_vx_does_not_equal_vy_for_instruction_5xy0()
+    {
+        var registers = new int[15];
+        
+        registers[2] = 99;
+        registers[10] = 100;
+        
+        var instruction = Convert.ToInt16("0x5A20", 16);
+    
+        var sut = new Chip8(registers, 500, _testOutputHelper);
+        
+        sut.ReadInstruction(instruction);
+        
+        Assert.Equal(500, sut.PC);
+    }
 
     [Fact(DisplayName = "Annn - LD I, addr - Set I = nnn.")]
     public void process_instruction_annn()
@@ -248,7 +295,7 @@ public class Chip8Should
     {
         var memory = new byte[4096];
        
-        var gameInstructions = File.ReadAllBytes("../../../games/Airplane.ch8");
+        var gameInstructions = File.ReadAllBytes("../../../games/Blitz.ch8");
         
         gameInstructions.CopyTo(memory, 512);
         
