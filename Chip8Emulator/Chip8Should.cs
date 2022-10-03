@@ -10,7 +10,6 @@ public class Chip8Should
         private readonly ITestOutputHelper _testOutputHelper;
         public byte[] Memory { get; } = new byte[4096];
 
-        // 16 general purpose 8-bit registers, usually referred to as Vx, where x is a hexadecimal digit (0 through F).
         public int[] V { get; }
         
         public byte DelayTimer;
@@ -27,24 +26,16 @@ public class Chip8Should
         // This register is generally used to store memory addresses, so only the lowest (rightmost) 12 bits are usually used.
         public int I { get; private set; }
         
-        // The program counter (PC) should be 16-bit, and is used to store the currently executing address.
         public int PC { get; private set; }
-
-        // The stack pointer (SP) can be 8-bit, it is used to point to the topmost level of the stack.
-        public byte SP { get;  }
 
         public Stack<int> Stack { get; }
 
-        /*
-            nnn or addr - A 12-bit value, the lowest 12 bits of the instruction
-            n or nibble - A 4-bit value, the lowest 4 bits of the instruction
-            x - A 4-bit value, the lower 4 bits of the high byte of the instruction
-            y - A 4-bit value, the upper 4 bits of the low byte of the instruction
-            kk or byte - An 8-bit value, the lowest 8 bits of the instruction
-        */
         public void ReadInstruction(short instruction)
         {
-            var instructionBytesFromShort = BitConverter.GetBytes(instruction).Reverse().ToArray();
+            var instructionBytesFromShort = BitConverter
+                .GetBytes(instruction)
+                .Reverse()
+                .ToArray();
 
             var instructionHexString = BitConverter
                 .ToString(instructionBytesFromShort, 0, 2 )
