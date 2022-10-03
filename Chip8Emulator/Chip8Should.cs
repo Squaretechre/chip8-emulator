@@ -7,19 +7,32 @@ public class Chip8Should
 {
     public class Chip8
     {
+        private readonly ITestOutputHelper _testOutputHelper;
+        public byte[] Memory { get; } = new byte[4096];
+
         // 16 general purpose 8-bit registers, usually referred to as Vx, where x is a hexadecimal digit (0 through F).
-        public byte[] V { get; } = new byte[16];
+        public int[] V { get; }
         
+        public byte DelayTimer;
+        public byte SoundTimer;
+
+        public Chip8(int[] v, int pc, ITestOutputHelper testOutputHelper)
+        {
+            V = v;
+            PC = pc;
+            _testOutputHelper = testOutputHelper;
+        }
+
         // This register is generally used to store memory addresses, so only the lowest (rightmost) 12 bits are usually used.
-        public short I { get; }
+        public int I { get; private set; }
         
         // The program counter (PC) should be 16-bit, and is used to store the currently executing address.
-        public short PC { get; }
-        
+        public int PC { get; private set; }
+
         // The stack pointer (SP) can be 8-bit, it is used to point to the topmost level of the stack.
         public byte SP { get;  }
-        
-        public Stack<short> Stack { get; }
+
+        public Stack<int> Stack { get; } = new();
 
         /*
             nnn or addr - A 12-bit value, the lowest 12 bits of the instruction
@@ -30,7 +43,29 @@ public class Chip8Should
         */
         public void ReadInstruction(short instruction)
         {
+            var instructionBytesFromShort = BitConverter.GetBytes(instruction).Reverse().ToArray();
+
+            var instructionHexString = BitConverter
+                .ToString(instructionBytesFromShort, 0, 2 )
+                .Replace("-", "");
             
+            if (Regex.IsMatch(instructionHexString, "1..."))
+            {
+                PC = instruction & 0xFFF;
+            }
+            if (Regex.IsMatch(instructionHexString, "2..."))
+            {
+                Stack.Push(PC);
+                PC = instruction & 0xFFF;
+            }
+            if (Regex.IsMatch(instructionHexString, "A..."))
+            {
+                I = instruction & 0xFFF;
+            }
+            if (Regex.IsMatch(instructionHexString, "B..."))
+            {
+                PC = (instruction & 0xFFF) + V[0];
+            }
         }
     }
     
@@ -40,20 +75,70 @@ public class Chip8Should
     {
         _testOutputHelper = testOutputHelper;
     }
+    
+    [Fact(DisplayName = "1nnn - JP addr - Jump to location nnn.")]
+    public void process_instruction_1nnn()
+    {
+        var instruction = Convert.ToInt16("0x1217", 16);
 
+        var sut = new Chip8(Array.Empty<int>(), 500, _testOutputHelper);
+        
+        sut.ReadInstruction(instruction);
+        
+        Assert.Equal(535, sut.PC);
+    }
+    
+    [Fact(DisplayName = "2nnn - CALL addr - Call subroutine at nnn.")]
+    public void process_instruction_2nnn()
+    {
+        var instruction = Convert.ToInt16("0x2326", 16);
+    
+        var sut = new Chip8(Array.Empty<int>(), 520, _testOutputHelper);
+        
+        sut.ReadInstruction(instruction);
+        
+        Assert.Equal(806, sut.PC);
+        Assert.Equal(520, sut.Stack.Peek());
+    }
+
+    [Fact(DisplayName = "Annn - LD I, addr - Set I = nnn.")]
+    public void process_instruction_annn()
+    {
+        var instruction = Convert.ToInt16("0xA2B4", 16);
+
+        var sut = new Chip8(Array.Empty<int>(), 500, _testOutputHelper);
+        
+        sut.ReadInstruction(instruction);
+        
+        Assert.Equal(692, sut.I);
+    }
+    
+    [Fact(DisplayName = "Bnnn - JP V0, addr - Jump to location nnn + V0.")]
+    public void process_instruction_bnnn()
+    {
+        var registers = new int[15];
+        
+        registers[0] = 10;
+        
+        var instruction = Convert.ToInt16("0xB23F", 16);
+
+        var sut = new Chip8(registers, 500, _testOutputHelper);
+        
+        sut.ReadInstruction(instruction);
+        
+        Assert.Equal(585, sut.PC);
+    }
+    
     [Fact]
     public void print_memory()
     {
         var memory = new byte[4096];
        
-        var gameInstructions = File.ReadAllBytes("../../../games/Tetris.ch8");
+        var gameInstructions = File.ReadAllBytes("../../../games/Airplane.ch8");
         
         gameInstructions.CopyTo(memory, 512);
         
-        _testOutputHelper.WriteLine(Directory.GetCurrentDirectory());
-        
         PrintMemoryBinary(memory);
-        // PrintMemoryHex(memory);
     }
 
     [Fact]
