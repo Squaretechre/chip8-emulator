@@ -20,6 +20,7 @@ public class Chip8Should
         {
             V = v;
             PC = pc;
+            Stack = new Stack<int>();
             _testOutputHelper = testOutputHelper;
         }
 
@@ -32,7 +33,7 @@ public class Chip8Should
         // The stack pointer (SP) can be 8-bit, it is used to point to the topmost level of the stack.
         public byte SP { get;  }
 
-        public Stack<int> Stack { get; } = new();
+        public Stack<int> Stack { get; }
 
         /*
             nnn or addr - A 12-bit value, the lowest 12 bits of the instruction
@@ -49,6 +50,10 @@ public class Chip8Should
                 .ToString(instructionBytesFromShort, 0, 2 )
                 .Replace("-", "");
             
+            if (Regex.IsMatch(instructionHexString, "00EE"))
+            {
+                PC = Stack.Pop();
+            }
             if (Regex.IsMatch(instructionHexString, "1..."))
             {
                 PC = instruction & 0xFFF;
@@ -76,6 +81,27 @@ public class Chip8Should
         _testOutputHelper = testOutputHelper;
     }
     
+    [Fact(DisplayName = "00EE - RET - Return from a subroutine.")]
+    public void process_instruction_00ee()
+    {
+        const int initialProgramCounterLocation = 500;
+
+        var callSubroutineInstruction = Convert.ToInt16("0x2326", 16);
+        var returnFromSubroutineInstruction = Convert.ToInt16("0x00EE", 16);
+        
+        var sut = new Chip8(Array.Empty<int>(), initialProgramCounterLocation, _testOutputHelper);
+        
+        sut.ReadInstruction(callSubroutineInstruction);
+        
+        Assert.Equal(806, sut.PC);
+        Assert.Equal(500, sut.Stack.Peek());
+
+        sut.ReadInstruction(returnFromSubroutineInstruction);
+       
+        Assert.Equal(initialProgramCounterLocation, sut.PC);
+        Assert.True(IsEmpty(sut.Stack));
+    }
+
     [Fact(DisplayName = "1nnn - JP addr - Jump to location nnn.")]
     public void process_instruction_1nnn()
     {
@@ -370,4 +396,10 @@ public class Chip8Should
             _testOutputHelper.WriteLine("");
         }
     }
+    
+    private static bool IsEmpty(Stack<int> stack) 
+        => ExceptionMessage(() => stack.Peek()).Equals("Stack empty.");
+
+    private static string ExceptionMessage(Action action) 
+        => Record.Exception(action)!.Message;
 }
