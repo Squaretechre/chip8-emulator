@@ -93,6 +93,14 @@ public class Chip8Should
                 
                 V[register] = value;
             }
+            if (Regex.IsMatch(instructionHexString, "7..."))
+            {
+                var (upperByte, value) = GetBytesFor(instruction);
+
+                var register = upperByte & 0x0F;
+                
+                V[register] += value;
+            }
             if (Regex.IsMatch(instructionHexString, "A..."))
             {
                 I = instruction & 0xFFF;
@@ -320,6 +328,30 @@ public class Chip8Should
         Assert.Equal(4, sut.V[13]);
         Assert.Equal(5, sut.V[14]);
         Assert.Equal(6, sut.V[15]);
+    }
+    
+    [Fact(DisplayName = "7xkk - ADD Vx, byte - Set Vx = Vx + kk.")]
+    public void process_instruction_7xkk()
+    {
+        var registers = new int[16];
+        
+        registers[0] = 10;
+        registers[10] = 20;
+        registers[15] = 30;
+        
+        var add5ToRegister0 = Convert.ToInt16("0x7005", 16);
+        var add1ToRegister10 = Convert.ToInt16("0x7A01", 16);
+        var add3ToRegister16 = Convert.ToInt16("0x7F03", 16);
+    
+        var sut = new Chip8(registers, 500, _testOutputHelper);
+        
+        sut.ReadInstruction(add5ToRegister0);
+        sut.ReadInstruction(add1ToRegister10);
+        sut.ReadInstruction(add3ToRegister16);
+        
+        Assert.Equal(15, sut.V[0]);
+        Assert.Equal(21, sut.V[10]);
+        Assert.Equal(33, sut.V[15]);
     }
 
     [Fact(DisplayName = "Annn - LD I, addr - Set I = nnn.")]
