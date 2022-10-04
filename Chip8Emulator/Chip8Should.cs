@@ -101,6 +101,24 @@ public class Chip8Should
                 
                 V[register] += value;
             }
+            if (Regex.IsMatch(instructionHexString, "8..0"))
+            {
+                var (upperByte, lowerByte) = GetBytesFor(instruction);
+
+                var registerToAssign = upperByte & 0x0F;
+                var registerToOrWith = lowerByte >> 4;
+                
+                V[registerToAssign] = V[registerToOrWith];
+            }
+            if (Regex.IsMatch(instructionHexString, "8..1"))
+            {
+                var (upperByte, lowerByte) = GetBytesFor(instruction);
+
+                var registerToAssign = upperByte & 0x0F;
+                var registerWithValue = lowerByte >> 4;
+
+                V[registerToAssign] |= V[registerWithValue];
+            }
             if (Regex.IsMatch(instructionHexString, "A..."))
             {
                 I = instruction & 0xFFF;
@@ -352,6 +370,72 @@ public class Chip8Should
         Assert.Equal(15, sut.V[0]);
         Assert.Equal(21, sut.V[10]);
         Assert.Equal(33, sut.V[15]);
+    }
+    
+    [Fact(DisplayName = "8xy0 - LD Vx, Vy - Set Vx = Vy.")]
+    public void process_instruction_8xy0()
+    {
+        var registers = new int[16];
+        
+        registers[6] = 50;
+        registers[15] = 100;
+        
+        var storeValueOfRegister15InRegister7 = Convert.ToInt16("0x87F0", 16);
+        var storeValueOfRegister6InRegister1 = Convert.ToInt16("0x8160", 16);
+    
+        var sut = new Chip8(registers, 500, _testOutputHelper);
+        
+        sut.ProcessInstruction(storeValueOfRegister15InRegister7);
+        sut.ProcessInstruction(storeValueOfRegister6InRegister1);
+        
+        Assert.Equal(0, sut.V[0]);
+        Assert.Equal(50, sut.V[1]);
+        Assert.Equal(0, sut.V[2]);
+        Assert.Equal(0, sut.V[3]);
+        Assert.Equal(0, sut.V[4]);
+        Assert.Equal(0, sut.V[5]);
+        Assert.Equal(50, sut.V[6]);
+        Assert.Equal(100, sut.V[7]);
+        Assert.Equal(0, sut.V[8]);
+        Assert.Equal(0, sut.V[9]);
+        Assert.Equal(0, sut.V[10]);
+        Assert.Equal(0, sut.V[11]);
+        Assert.Equal(0, sut.V[12]);
+        Assert.Equal(0, sut.V[13]);
+        Assert.Equal(0, sut.V[14]);
+        Assert.Equal(100, sut.V[15]);
+    }
+    
+    [Fact(DisplayName = "8xy1 - OR Vx, Vy - Set Vx = Vx OR Vy.")]
+    public void process_instruction_8xy1()
+    {
+        var registers = new int[16];
+        
+        registers[2] = 20;
+        registers[8] = 10;
+        
+        var orRegister2WithRegister8AndStoreInRegister2 = Convert.ToInt16("0x8281", 16);
+    
+        var sut = new Chip8(registers, 500, _testOutputHelper);
+        
+        sut.ProcessInstruction(orRegister2WithRegister8AndStoreInRegister2);
+        
+        Assert.Equal(0, sut.V[0]);
+        Assert.Equal(0, sut.V[1]);
+        Assert.Equal(30, sut.V[2]);
+        Assert.Equal(0, sut.V[3]);
+        Assert.Equal(0, sut.V[4]);
+        Assert.Equal(0, sut.V[5]);
+        Assert.Equal(0, sut.V[6]);
+        Assert.Equal(0, sut.V[7]);
+        Assert.Equal(10, sut.V[8]);
+        Assert.Equal(0, sut.V[9]);
+        Assert.Equal(0, sut.V[10]);
+        Assert.Equal(0, sut.V[11]);
+        Assert.Equal(0, sut.V[12]);
+        Assert.Equal(0, sut.V[13]);
+        Assert.Equal(0, sut.V[14]);
+        Assert.Equal(0, sut.V[15]);
     }
 
     [Fact(DisplayName = "Annn - LD I, addr - Set I = nnn.")]
