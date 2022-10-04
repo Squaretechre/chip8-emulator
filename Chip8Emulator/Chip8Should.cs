@@ -122,6 +122,16 @@ public class Chip8Should
 
                 V[registerToAssign] ^= V[registerToXorWith];
             }
+            if (Regex.IsMatch(instructionHexString, "8..4"))
+            {
+                var (register1, register2) = MiddleTwoNibblesOf(instruction);
+
+                var addResult = V[register1] + V[register2];
+
+                V[15] = addResult > 255 ? 1 : 0;
+                
+                V[register1] = addResult & 0xFF;
+            }
             if (Regex.IsMatch(instructionHexString, "A..."))
             {
                 I = Lower12BitsOf(instruction);
@@ -506,6 +516,72 @@ public class Chip8Should
         Assert.Equal(0, sut.V[6]);
         Assert.Equal(0, sut.V[7]);
         Assert.Equal(60, sut.V[8]);
+        Assert.Equal(0, sut.V[9]);
+        Assert.Equal(0, sut.V[10]);
+        Assert.Equal(0, sut.V[11]);
+        Assert.Equal(0, sut.V[12]);
+        Assert.Equal(0, sut.V[13]);
+        Assert.Equal(0, sut.V[14]);
+        Assert.Equal(0, sut.V[15]);
+    }
+    
+    [Fact(DisplayName = "8xy4 - ADD Vx, Vy - Set Vx = Vx + Vy, set VF = carry. With carry.")]
+    public void set_the_carry_flag_when_processing_instruction_8xy4_and_the_result_is_greater_than_8_bits()
+    {
+        var registers = new int[16];
+        
+        registers[6] = 155;
+        registers[7] = 105;
+        registers[15] = 0;
+        
+        var xorRegister8WithRegister2AndStoreInRegister2 = Convert.ToInt16("0x8674", 16);
+    
+        var sut = new Chip8(registers, 500, _testOutputHelper);
+        
+        sut.ProcessInstruction(xorRegister8WithRegister2AndStoreInRegister2);
+        
+        Assert.Equal(0, sut.V[0]);
+        Assert.Equal(0, sut.V[1]);
+        Assert.Equal(0, sut.V[2]);
+        Assert.Equal(0, sut.V[3]);
+        Assert.Equal(0, sut.V[4]);
+        Assert.Equal(0, sut.V[5]);
+        Assert.Equal(4, sut.V[6]);
+        Assert.Equal(105, sut.V[7]);
+        Assert.Equal(0, sut.V[8]);
+        Assert.Equal(0, sut.V[9]);
+        Assert.Equal(0, sut.V[10]);
+        Assert.Equal(0, sut.V[11]);
+        Assert.Equal(0, sut.V[12]);
+        Assert.Equal(0, sut.V[13]);
+        Assert.Equal(0, sut.V[14]);
+        Assert.Equal(1, sut.V[15]);
+    }
+    
+    [Fact(DisplayName = "8xy4 - ADD Vx, Vy - Set Vx = Vx + Vy, set VF = carry. Without carry.")]
+    public void not_set_the_carry_flag_when_processing_instruction_8xy4_and_the_result_is_8_bits()
+    {
+        var registers = new int[16];
+        
+        registers[6] = 155;
+        registers[7] = 100;
+        registers[15] = 1;
+        
+        var xorRegister8WithRegister2AndStoreInRegister2 = Convert.ToInt16("0x8674", 16);
+    
+        var sut = new Chip8(registers, 500, _testOutputHelper);
+        
+        sut.ProcessInstruction(xorRegister8WithRegister2AndStoreInRegister2);
+        
+        Assert.Equal(0, sut.V[0]);
+        Assert.Equal(0, sut.V[1]);
+        Assert.Equal(0, sut.V[2]);
+        Assert.Equal(0, sut.V[3]);
+        Assert.Equal(0, sut.V[4]);
+        Assert.Equal(0, sut.V[5]);
+        Assert.Equal(255, sut.V[6]);
+        Assert.Equal(100, sut.V[7]);
+        Assert.Equal(0, sut.V[8]);
         Assert.Equal(0, sut.V[9]);
         Assert.Equal(0, sut.V[10]);
         Assert.Equal(0, sut.V[11]);
