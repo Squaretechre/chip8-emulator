@@ -132,6 +132,14 @@ public class Chip8Should
                 
                 V[register1] = addResult & 0xFF;
             }
+            if (Regex.IsMatch(instructionHexString, "8..5"))
+            {
+                var (registerToAssign, registerToSubtract) = MiddleTwoNibblesOf(instruction);
+                
+                V[15] = V[registerToAssign] > V[registerToSubtract] ? 1 : 0;
+
+                V[registerToAssign] -= V[registerToSubtract];
+            }
             if (Regex.IsMatch(instructionHexString, "A..."))
             {
                 I = Lower12BitsOf(instruction);
@@ -582,6 +590,72 @@ public class Chip8Should
         Assert.Equal(255, sut.V[6]);
         Assert.Equal(100, sut.V[7]);
         Assert.Equal(0, sut.V[8]);
+        Assert.Equal(0, sut.V[9]);
+        Assert.Equal(0, sut.V[10]);
+        Assert.Equal(0, sut.V[11]);
+        Assert.Equal(0, sut.V[12]);
+        Assert.Equal(0, sut.V[13]);
+        Assert.Equal(0, sut.V[14]);
+        Assert.Equal(0, sut.V[15]);
+    }
+    
+    [Fact(DisplayName = "8xy5 - SUB Vx, Vy - Set Vx = Vx - Vy, set VF = NOT borrow. With not borrow.")]
+    public void set_the_not_borrow_flag_when_vx_is_greater_than_vy_when_processing_instruction_8xy5()
+    {
+        var registers = new int[16];
+        
+        registers[0] = 10;
+        registers[8] = 15;
+        registers[15] = 0;
+        
+        var xorRegister8WithRegister2AndStoreInRegister2 = Convert.ToInt16("0x8805", 16);
+    
+        var sut = new Chip8(registers, 500, _testOutputHelper);
+        
+        sut.ProcessInstruction(xorRegister8WithRegister2AndStoreInRegister2);
+        
+        Assert.Equal(10, sut.V[0]);
+        Assert.Equal(0, sut.V[1]);
+        Assert.Equal(0, sut.V[2]);
+        Assert.Equal(0, sut.V[3]);
+        Assert.Equal(0, sut.V[4]);
+        Assert.Equal(0, sut.V[5]);
+        Assert.Equal(0, sut.V[6]);
+        Assert.Equal(0, sut.V[7]);
+        Assert.Equal(5, sut.V[8]);
+        Assert.Equal(0, sut.V[9]);
+        Assert.Equal(0, sut.V[10]);
+        Assert.Equal(0, sut.V[11]);
+        Assert.Equal(0, sut.V[12]);
+        Assert.Equal(0, sut.V[13]);
+        Assert.Equal(0, sut.V[14]);
+        Assert.Equal(1, sut.V[15]);
+    }
+    
+    [Fact(DisplayName = "8xy5 - SUB Vx, Vy - Set Vx = Vx - Vy, set VF = NOT borrow. Without not borrow.")]
+    public void not_set_the_not_borrow_flag_when_vx_is_not_greater_than_vy_when_processing_instruction_8xy5()
+    {
+        var registers = new int[16];
+        
+        registers[0] = 10;
+        registers[8] = 6;
+        registers[15] = 1;
+        
+        var xorRegister8WithRegister2AndStoreInRegister2 = Convert.ToInt16("0x8805", 16);
+    
+        var sut = new Chip8(registers, 500, _testOutputHelper);
+        
+        sut.ProcessInstruction(xorRegister8WithRegister2AndStoreInRegister2);
+        
+        Assert.Equal(10, sut.V[0]);
+        Assert.Equal(0, sut.V[1]);
+        Assert.Equal(0, sut.V[2]);
+        Assert.Equal(0, sut.V[3]);
+        Assert.Equal(0, sut.V[4]);
+        Assert.Equal(0, sut.V[5]);
+        Assert.Equal(0, sut.V[6]);
+        Assert.Equal(0, sut.V[7]);
+        Assert.Equal(-4, sut.V[8]);
         Assert.Equal(0, sut.V[9]);
         Assert.Equal(0, sut.V[10]);
         Assert.Equal(0, sut.V[11]);
