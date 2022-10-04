@@ -47,18 +47,18 @@ public class Chip8Should
             }
             if (Regex.IsMatch(instructionHexString, "1..."))
             {
-                PC = instruction & 0xFFF;
+                PC = Lower12BitsOf(instruction);
             }
             if (Regex.IsMatch(instructionHexString, "2..."))
             {
                 Stack.Push(PC);
-                PC = instruction & 0xFFF;
+                PC = Lower12BitsOf(instruction);
             }
             if (Regex.IsMatch(instructionHexString, "3..."))
             {
-                var (upperByte, valueToCompare) = GetBytesFor(instruction);
+                var (upperByte, valueToCompare) = UpperAndLowerBytesOf(instruction);
                 
-                var register = upperByte & 0x0F;
+                var register = LowerNibbleOf(upperByte);
 
                 if (V[register] != valueToCompare) return;
 
@@ -66,9 +66,9 @@ public class Chip8Should
             }
             if (Regex.IsMatch(instructionHexString, "4..."))
             {
-                var (upperByte, valueToCompare) = GetBytesFor(instruction);
+                var (upperByte, valueToCompare) = UpperAndLowerBytesOf(instruction);
                 
-                var register = upperByte & 0x0F;
+                var register = LowerNibbleOf(upperByte);
 
                 if (V[register] == valueToCompare) return;
 
@@ -76,65 +76,66 @@ public class Chip8Should
             }
             if (Regex.IsMatch(instructionHexString, "5..0"))
             {
-                var (upperByte, lowerByte) = GetBytesFor(instruction);
-
-                var register1 = upperByte & 0x0F;
-                var register2 = lowerByte >> 4;
-
+                var (register1, register2) = MiddleTwoNibblesOf(instruction);
+                
                 if (V[register1] != V[register2]) return;
-
+                
                 PC += 2;
             }
             if (Regex.IsMatch(instructionHexString, "6..."))
             {
-                var (upperByte, value) = GetBytesFor(instruction);
+                var (upperByte, value) = UpperAndLowerBytesOf(instruction);
 
-                var register = upperByte & 0x0F;
+                var register = LowerNibbleOf(upperByte);
                 
                 V[register] = value;
             }
             if (Regex.IsMatch(instructionHexString, "7..."))
             {
-                var (upperByte, value) = GetBytesFor(instruction);
+                var (upperByte, value) = UpperAndLowerBytesOf(instruction);
 
-                var register = upperByte & 0x0F;
+                var register = LowerNibbleOf(upperByte);
                 
                 V[register] += value;
             }
             if (Regex.IsMatch(instructionHexString, "8..0"))
             {
-                var (upperByte, lowerByte) = GetBytesFor(instruction);
-
-                var registerToAssign = upperByte & 0x0F;
-                var registerToOrWith = lowerByte >> 4;
+                var (registerToAssign, registerWithValue) = MiddleTwoNibblesOf(instruction);
                 
-                V[registerToAssign] = V[registerToOrWith];
+                V[registerToAssign] = V[registerWithValue];
             }
             if (Regex.IsMatch(instructionHexString, "8..1"))
             {
-                var (upperByte, lowerByte) = GetBytesFor(instruction);
+                var (registerToAssign, registerToOrWith) = MiddleTwoNibblesOf(instruction);
 
-                var registerToAssign = upperByte & 0x0F;
-                var registerWithValue = lowerByte >> 4;
-
-                V[registerToAssign] |= V[registerWithValue];
+                V[registerToAssign] |= V[registerToOrWith];
             }
             if (Regex.IsMatch(instructionHexString, "A..."))
             {
-                I = instruction & 0xFFF;
+                I = Lower12BitsOf(instruction);
             }
             if (Regex.IsMatch(instructionHexString, "B..."))
             {
-                PC = (instruction & 0xFFF) + V[0];
+                PC = Lower12BitsOf(instruction) + V[0];
             }
         }
 
-        private static Tuple<byte, byte> GetBytesFor(short instruction)
+        private static int Lower12BitsOf(short instruction) => instruction & 0xFFF;
+        private static int UpperNibbleOf(byte @byte) => @byte >> 4;
+        private static int LowerNibbleOf(byte @byte) => @byte & 0x0F;
+
+        private static Tuple<byte, byte> UpperAndLowerBytesOf(short instruction)
         {
             var instructionBytes = BitConverter.GetBytes(instruction).Reverse().ToArray();
             var upperByte = instructionBytes[0];
             var lowerByte = instructionBytes[1];
             return new Tuple<byte, byte>(upperByte, lowerByte);
+        }
+        
+        private static Tuple<int, int> MiddleTwoNibblesOf(short instruction)
+        {
+            var (upperByte, lowerByte) = UpperAndLowerBytesOf(instruction);
+            return new Tuple<int, int>(LowerNibbleOf(upperByte), UpperNibbleOf(lowerByte));
         }
     }
     
