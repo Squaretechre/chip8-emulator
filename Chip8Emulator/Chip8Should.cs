@@ -629,6 +629,70 @@ public class Chip8Should
         Assert.Equal(0, sut.V[14]);
         Assert.Equal(0, sut.V[15]);
     }
+    
+    [Fact(DisplayName = "8xyE - SHL Vx {, Vy} - Set Vx = Vx SHL 1. When MSB of Vx is 1")]
+    public void set_vf_to_1_when_most_significant_bit_of_vx_is_1_when_processing_instruction_8xyE()
+    {
+        var registers = new int[16];
+
+        registers[1] = 128;
+        registers[15] = 0;
+
+        var instruction = Convert.ToInt16("0x812E", 16);
+
+        var sut = new Chip8(registers, 500, _testOutputHelper);
+
+        sut.ProcessInstruction(instruction);
+
+        Assert.Equal(0, sut.V[0]);
+        Assert.Equal(256, sut.V[1]);
+        Assert.Equal(0, sut.V[2]);
+        Assert.Equal(0, sut.V[3]);
+        Assert.Equal(0, sut.V[4]);
+        Assert.Equal(0, sut.V[5]);
+        Assert.Equal(0, sut.V[6]);
+        Assert.Equal(0, sut.V[7]);
+        Assert.Equal(0, sut.V[8]);
+        Assert.Equal(0, sut.V[9]);
+        Assert.Equal(0, sut.V[10]);
+        Assert.Equal(0, sut.V[11]);
+        Assert.Equal(0, sut.V[12]);
+        Assert.Equal(0, sut.V[13]);
+        Assert.Equal(0, sut.V[14]);
+        Assert.Equal(1, sut.V[15]);
+    }
+    
+    [Fact(DisplayName = "8xyE - SHL Vx {, Vy} - Set Vx = Vx SHL 1. When MSB of Vx is 1")]
+    public void set_vf_to_0_when_most_significant_bit_of_vx_is_0_when_processing_instruction_8xyE()
+    {
+        var registers = new int[16];
+
+        registers[1] = 127;
+        registers[15] = 0;
+
+        var instruction = Convert.ToInt16("0x812E", 16);
+
+        var sut = new Chip8(registers, 500, _testOutputHelper);
+
+        sut.ProcessInstruction(instruction);
+
+        Assert.Equal(0, sut.V[0]);
+        Assert.Equal(254, sut.V[1]);
+        Assert.Equal(0, sut.V[2]);
+        Assert.Equal(0, sut.V[3]);
+        Assert.Equal(0, sut.V[4]);
+        Assert.Equal(0, sut.V[5]);
+        Assert.Equal(0, sut.V[6]);
+        Assert.Equal(0, sut.V[7]);
+        Assert.Equal(0, sut.V[8]);
+        Assert.Equal(0, sut.V[9]);
+        Assert.Equal(0, sut.V[10]);
+        Assert.Equal(0, sut.V[11]);
+        Assert.Equal(0, sut.V[12]);
+        Assert.Equal(0, sut.V[13]);
+        Assert.Equal(0, sut.V[14]);
+        Assert.Equal(0, sut.V[15]);
+    }
 
     [Fact(DisplayName = "Annn - LD I, addr - Set I = nnn.")]
     public void process_instruction_annn()

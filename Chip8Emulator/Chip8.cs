@@ -164,6 +164,15 @@ public class Chip8
 
             V[x] = V[y] - V[x];
         }
+        
+        if (Regex.IsMatch(instructionHex, "8..E"))
+        {
+            var (x, y) = MiddleTwoNibblesOf(instruction);
+
+            V[F] = (V[x] >> 7) & 1;
+
+            V[x] <<= 1;
+        }
 
         if (Regex.IsMatch(instructionHex, "A..."))
         {
