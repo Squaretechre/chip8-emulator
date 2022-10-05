@@ -52,9 +52,9 @@ public class Chip8
         {
             var (upperByte, valueToCompare) = UpperAndLowerBytesOf(instruction);
 
-            var register = LowerNibbleOf(upperByte);
+            var x = LowerNibbleOf(upperByte);
 
-            if (V[register] != valueToCompare) return;
+            if (V[x] != valueToCompare) return;
 
             PC += 2;
         }
@@ -63,18 +63,18 @@ public class Chip8
         {
             var (upperByte, valueToCompare) = UpperAndLowerBytesOf(instruction);
 
-            var register = LowerNibbleOf(upperByte);
+            var x = LowerNibbleOf(upperByte);
 
-            if (V[register] == valueToCompare) return;
+            if (V[x] == valueToCompare) return;
 
             PC += 2;
         }
 
         if (Regex.IsMatch(instructionHex, "5..0"))
         {
-            var (register1, register2) = MiddleTwoNibblesOf(instruction);
+            var (x, y) = MiddleTwoNibblesOf(instruction);
 
-            if (V[register1] != V[register2]) return;
+            if (V[x] != V[y]) return;
 
             PC += 2;
         }
@@ -83,84 +83,84 @@ public class Chip8
         {
             var (upperByte, value) = UpperAndLowerBytesOf(instruction);
 
-            var register = LowerNibbleOf(upperByte);
+            var x = LowerNibbleOf(upperByte);
 
-            V[register] = value;
+            V[x] = value;
         }
 
         if (Regex.IsMatch(instructionHex, "7..."))
         {
             var (upperByte, value) = UpperAndLowerBytesOf(instruction);
 
-            var register = LowerNibbleOf(upperByte);
+            var x = LowerNibbleOf(upperByte);
 
-            V[register] += value;
+            V[x] += value;
         }
 
         if (Regex.IsMatch(instructionHex, "8..0"))
         {
-            var (registerToAssign, registerWithValue) = MiddleTwoNibblesOf(instruction);
+            var (x, y) = MiddleTwoNibblesOf(instruction);
 
-            V[registerToAssign] = V[registerWithValue];
+            V[x] = V[y];
         }
 
         if (Regex.IsMatch(instructionHex, "8..1"))
         {
-            var (registerToAssign, registerToOrWith) = MiddleTwoNibblesOf(instruction);
+            var (x, y) = MiddleTwoNibblesOf(instruction);
 
-            V[registerToAssign] |= V[registerToOrWith];
+            V[x] |= V[y];
         }
 
         if (Regex.IsMatch(instructionHex, "8..2"))
         {
-            var (registerToAssign, registerToAndWith) = MiddleTwoNibblesOf(instruction);
+            var (x, y) = MiddleTwoNibblesOf(instruction);
 
-            V[registerToAssign] &= V[registerToAndWith];
+            V[x] &= V[y];
         }
 
         if (Regex.IsMatch(instructionHex, "8..3"))
         {
-            var (registerToAssign, registerToXorWith) = MiddleTwoNibblesOf(instruction);
+            var (x, y) = MiddleTwoNibblesOf(instruction);
 
-            V[registerToAssign] ^= V[registerToXorWith];
+            V[x] ^= V[y];
         }
 
         if (Regex.IsMatch(instructionHex, "8..4"))
         {
-            var (register1, register2) = MiddleTwoNibblesOf(instruction);
+            var (x, y) = MiddleTwoNibblesOf(instruction);
 
-            var addResult = V[register1] + V[register2];
+            var addResult = V[x] + V[y];
 
             V[15] = addResult > 255 ? 1 : 0;
 
-            V[register1] = addResult & 0xFF;
+            V[x] = addResult & 0xFF;
         }
 
         if (Regex.IsMatch(instructionHex, "8..5"))
         {
-            var (registerToAssign, registerToSubtract) = MiddleTwoNibblesOf(instruction);
+            var (x, y) = MiddleTwoNibblesOf(instruction);
 
-            V[15] = V[registerToAssign] > V[registerToSubtract] ? 1 : 0;
+            V[15] = V[x] > V[y] ? 1 : 0;
 
-            V[registerToAssign] -= V[registerToSubtract];
+            V[x] -= V[y];
         }
         
         if (Regex.IsMatch(instructionHex, "8..6"))
         {
-            var (register, _) = MiddleTwoNibblesOf(instruction);
+            var (x, _) = MiddleTwoNibblesOf(instruction);
 
-            V[15] = (V[register] & 0x01) == 1 ? 1 : 0;
+            V[15] = (V[x] & 0x01) == 1 ? 1 : 0;
 
-            V[register] /= 2;
+            V[x] /= 2;
         }
         
         if (Regex.IsMatch(instructionHex, "8..7"))
         {
-            var (registerX, registerY) = MiddleTwoNibblesOf(instruction);
+            var (x, y) = MiddleTwoNibblesOf(instruction);
 
-            V[15] = V[registerY] > V[registerX] ? 1 : 0;
+            V[15] = V[y] > V[x] ? 1 : 0;
 
-            V[registerX] = V[registerY] - V[registerX];
+            V[x] = V[y] - V[x];
         }
 
         if (Regex.IsMatch(instructionHex, "A..."))
