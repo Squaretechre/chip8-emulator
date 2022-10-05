@@ -693,6 +693,40 @@ public class Chip8Should
         Assert.Equal(0, sut.V[14]);
         Assert.Equal(0, sut.V[15]);
     }
+    
+    [Fact(DisplayName = "9xy0 - SNE Vx, Vy - Skip next instruction if Vx != Vy. When Vx != Vy.")]
+    public void increment_program_counter_by_2_when_vx_not_equal_to_vy_when_processing_instruction_9xy0()
+    {
+        var registers = new int[16];
+
+        registers[1] = 10;
+        registers[2] = 20;
+
+        var instruction = Convert.ToInt16("0x9120", 16);
+
+        var sut = new Chip8(registers, 500, _testOutputHelper);
+
+        sut.ProcessInstruction(instruction);
+        
+        Assert.Equal(502, sut.PC);
+    }
+    
+    [Fact(DisplayName = "9xy0 - SNE Vx, Vy - Skip next instruction if Vx != Vy. When Vx = Vy.")]
+    public void not_increment_program_counter_by_2_when_vx_is_equal_to_vy_when_processing_instruction_9xy0()
+    {
+        var registers = new int[16];
+
+        registers[1] = 10;
+        registers[2] = 10;
+
+        var instruction = Convert.ToInt16("0x9120", 16);
+
+        var sut = new Chip8(registers, 500, _testOutputHelper);
+
+        sut.ProcessInstruction(instruction);
+        
+        Assert.Equal(500, sut.PC);
+    }
 
     [Fact(DisplayName = "Annn - LD I, addr - Set I = nnn.")]
     public void process_instruction_annn()

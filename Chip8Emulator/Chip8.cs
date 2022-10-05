@@ -173,6 +173,15 @@ public class Chip8
 
             V[x] <<= 1;
         }
+        
+        if (Regex.IsMatch(instructionHex, "9..0"))
+        {
+            var (x, y) = MiddleTwoNibblesOf(instruction);
+
+            if (V[x] == V[y]) return;
+
+            PC += 2;
+        }
 
         if (Regex.IsMatch(instructionHex, "A..."))
         {
