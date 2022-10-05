@@ -57,7 +57,7 @@ public class Chip8Should
         Assert.Equal(520, sut.Stack.Peek());
     }
 
-    [Fact(DisplayName = "3xkk - SE Vx, byte - Skip next instruction if Vx = kk. ✅ Positive.")]
+    [Fact(DisplayName = "3xkk - SE Vx, byte - Skip next instruction if Vx = kk. When Vx = kk.")]
     public void increment_the_program_counter_by_2_when_vx_matches_value_kk_for_instruction_3xkk()
     {
         var registers = new int[16];
@@ -73,7 +73,7 @@ public class Chip8Should
         Assert.Equal(502, sut.PC);
     }
 
-    [Fact(DisplayName = "3xkk - SE Vx, byte - Skip next instruction if Vx = kk. ❌ Negative.")]
+    [Fact(DisplayName = "3xkk - SE Vx, byte - Skip next instruction if Vx = kk. When Vx != kk.")]
     public void not_increment_the_program_counter_by_2_when_vx_does_not_match_value_kk_for_instruction_3xkk()
     {
         var registers = new int[16];
@@ -89,7 +89,7 @@ public class Chip8Should
         Assert.Equal(500, sut.PC);
     }
 
-    [Fact(DisplayName = "4xkk - SNE Vx, byte - Skip next instruction if Vx != kk. ✅ Positive.")]
+    [Fact(DisplayName = "4xkk - SNE Vx, byte - Skip next instruction if Vx != kk. When Vx != kk.")]
     public void increment_the_program_counter_by_2_when_vx_does_not_matches_value_kk_for_instruction_4xkk()
     {
         var registers = new int[16];
@@ -105,7 +105,7 @@ public class Chip8Should
         Assert.Equal(502, sut.PC);
     }
 
-    [Fact(DisplayName = "4xkk - SNE Vx, byte - Skip next instruction if Vx != kk. ❌ Negative.")]
+    [Fact(DisplayName = "4xkk - SNE Vx, byte - Skip next instruction if Vx != kk. When Vx = kk.")]
     public void not_increment_the_program_counter_by_2_when_vx_does_match_value_kk_for_instruction_4xkk()
     {
         var registers = new int[16];
@@ -121,7 +121,7 @@ public class Chip8Should
         Assert.Equal(500, sut.PC);
     }
 
-    [Fact(DisplayName = "5xy0 - SE Vx, Vy - Skip next instruction if Vx = Vy. ✅ Positive.")]
+    [Fact(DisplayName = "5xy0 - SE Vx, Vy - Skip next instruction if Vx = Vy. When Vx = Vy.")]
     public void increment_the_program_counter_by_2_when_vx_equals_vy_for_instruction_5xy0()
     {
         var registers = new int[16];
@@ -138,7 +138,7 @@ public class Chip8Should
         Assert.Equal(502, sut.PC);
     }
 
-    [Fact(DisplayName = "5xy0 - SE Vx, Vy - Skip next instruction if Vx = Vy. ❌ Negative.")]
+    [Fact(DisplayName = "5xy0 - SE Vx, Vy - Skip next instruction if Vx = Vy. When Vx != Vy.")]
     public void not_increment_the_program_counter_by_2_when_vx_does_not_equal_vy_for_instruction_5xy0()
     {
         var registers = new int[16];
@@ -552,6 +552,72 @@ public class Chip8Should
         Assert.Equal(0, sut.V[3]);
         Assert.Equal(0, sut.V[4]);
         Assert.Equal(7, sut.V[5]);
+        Assert.Equal(0, sut.V[6]);
+        Assert.Equal(0, sut.V[7]);
+        Assert.Equal(0, sut.V[8]);
+        Assert.Equal(0, sut.V[9]);
+        Assert.Equal(0, sut.V[10]);
+        Assert.Equal(0, sut.V[11]);
+        Assert.Equal(0, sut.V[12]);
+        Assert.Equal(0, sut.V[13]);
+        Assert.Equal(0, sut.V[14]);
+        Assert.Equal(0, sut.V[15]);
+    }
+    
+    [Fact(DisplayName = "8xy7 - SUBN Vx, Vy - Set Vx = Vy - Vx, set VF = NOT borrow. With NOT borrow.")]
+    public void set_vf_to_1_when_vy_greater_than_vx_when_processing_instruction_8xy6()
+    {
+        var registers = new int[16];
+
+        registers[3] = 10;
+        registers[4] = 15;
+        registers[15] = 0;
+
+        var instruction = Convert.ToInt16("0x8347", 16);
+
+        var sut = new Chip8(registers, 500, _testOutputHelper);
+
+        sut.ProcessInstruction(instruction);
+
+        Assert.Equal(0, sut.V[0]);
+        Assert.Equal(0, sut.V[1]);
+        Assert.Equal(0, sut.V[2]);
+        Assert.Equal(5, sut.V[3]);
+        Assert.Equal(15, sut.V[4]);
+        Assert.Equal(0, sut.V[5]);
+        Assert.Equal(0, sut.V[6]);
+        Assert.Equal(0, sut.V[7]);
+        Assert.Equal(0, sut.V[8]);
+        Assert.Equal(0, sut.V[9]);
+        Assert.Equal(0, sut.V[10]);
+        Assert.Equal(0, sut.V[11]);
+        Assert.Equal(0, sut.V[12]);
+        Assert.Equal(0, sut.V[13]);
+        Assert.Equal(0, sut.V[14]);
+        Assert.Equal(1, sut.V[15]);
+    }
+    
+    [Fact(DisplayName = "8xy7 - SUBN Vx, Vy - Set Vx = Vy - Vx, set VF = NOT borrow. Without NOT borrow.")]
+    public void set_vf_to_0_when_vy_is_not_greater_than_vx_when_processing_instruction_8xy6()
+    {
+        var registers = new int[16];
+
+        registers[3] = 10;
+        registers[4] = 9;
+        registers[15] = 1;
+
+        var instruction = Convert.ToInt16("0x8347", 16);
+
+        var sut = new Chip8(registers, 500, _testOutputHelper);
+
+        sut.ProcessInstruction(instruction);
+
+        Assert.Equal(0, sut.V[0]);
+        Assert.Equal(0, sut.V[1]);
+        Assert.Equal(0, sut.V[2]);
+        Assert.Equal(-1, sut.V[3]);
+        Assert.Equal(9, sut.V[4]);
+        Assert.Equal(0, sut.V[5]);
         Assert.Equal(0, sut.V[6]);
         Assert.Equal(0, sut.V[7]);
         Assert.Equal(0, sut.V[8]);

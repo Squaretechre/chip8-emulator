@@ -153,6 +153,15 @@ public class Chip8
 
             V[register] /= 2;
         }
+        
+        if (Regex.IsMatch(instructionHex, "8..7"))
+        {
+            var (registerX, registerY) = MiddleTwoNibblesOf(instruction);
+
+            V[15] = V[registerY] > V[registerX] ? 1 : 0;
+
+            V[registerX] = V[registerY] - V[registerX];
+        }
 
         if (Regex.IsMatch(instructionHex, "A..."))
         {
