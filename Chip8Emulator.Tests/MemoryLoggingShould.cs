@@ -1,7 +1,9 @@
 using System.Text.RegularExpressions;
+using Chip8Emulator.Tests.Extensions;
+using Xunit;
 using Xunit.Abstractions;
 
-namespace Chip8Emulator;
+namespace Chip8Emulator.Tests;
 
 public class MemoryLoggingShould
 {

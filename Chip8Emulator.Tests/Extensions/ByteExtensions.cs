@@ -1,4 +1,4 @@
-namespace Chip8Emulator;
+namespace Chip8Emulator.Tests.Extensions;
 
 public static class ByteExtensions
 {

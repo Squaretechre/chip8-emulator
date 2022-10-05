@@ -1,17 +1,18 @@
+using Xunit;
 using Xunit.Abstractions;
 
-namespace Chip8Emulator;
+namespace Chip8Emulator.Tests;
 
 public class Chip8Should
 {
     private const int InitialProgramCounter = 500;
-    private readonly ITestOutputHelper _testOutputHelper;
+    private readonly IDebugger _debugger;
     private readonly Func<int> _stubbedRandomNumber;
-    private int[] _emptyRegisters;
+    private readonly int[] _emptyRegisters;
 
     public Chip8Should(ITestOutputHelper testOutputHelper)
     {
-        _testOutputHelper = testOutputHelper;
+        _debugger = new XUnitDebugger(testOutputHelper);
         _stubbedRandomNumber = () => 1;
         _emptyRegisters = Array.Empty<int>();
     }
@@ -26,7 +27,7 @@ public class Chip8Should
             _emptyRegisters, 
             InitialProgramCounter, 
             _stubbedRandomNumber,
-            _testOutputHelper);
+            _debugger);
 
         sut.ProcessInstruction(callSubroutineInstruction);
 
@@ -48,7 +49,7 @@ public class Chip8Should
             _emptyRegisters, 
             InitialProgramCounter, 
             _stubbedRandomNumber,
-            _testOutputHelper);
+            _debugger);
 
         sut.ProcessInstruction(instruction);
 
@@ -64,7 +65,7 @@ public class Chip8Should
             _emptyRegisters, 
             520, 
             _stubbedRandomNumber,
-            _testOutputHelper);
+            _debugger);
 
         sut.ProcessInstruction(instruction);
 
@@ -85,7 +86,7 @@ public class Chip8Should
             registers, 
             InitialProgramCounter, 
             _stubbedRandomNumber,
-            _testOutputHelper);
+            _debugger);
 
         sut.ProcessInstruction(instruction);
 
@@ -105,7 +106,7 @@ public class Chip8Should
             registers, 
             InitialProgramCounter, 
             _stubbedRandomNumber,
-            _testOutputHelper);
+            _debugger);
 
         sut.ProcessInstruction(instruction);
 
@@ -125,7 +126,7 @@ public class Chip8Should
             registers, 
             InitialProgramCounter, 
             _stubbedRandomNumber,
-            _testOutputHelper);
+            _debugger);
 
         sut.ProcessInstruction(instruction);
 
@@ -145,7 +146,7 @@ public class Chip8Should
             registers, 
             InitialProgramCounter, 
             _stubbedRandomNumber,
-            _testOutputHelper);
+            _debugger);
 
         sut.ProcessInstruction(instruction);
 
@@ -166,7 +167,7 @@ public class Chip8Should
             registers, 
             InitialProgramCounter, 
             _stubbedRandomNumber,
-            _testOutputHelper);
+            _debugger);
 
         sut.ProcessInstruction(instruction);
 
@@ -187,7 +188,7 @@ public class Chip8Should
             registers, 
             InitialProgramCounter, 
             _stubbedRandomNumber,
-            _testOutputHelper);
+            _debugger);
 
         sut.ProcessInstruction(instruction);
 
@@ -220,7 +221,7 @@ public class Chip8Should
             registers, 
             InitialProgramCounter, 
             _stubbedRandomNumber,
-            _testOutputHelper);
+            _debugger);
 
         sut.ProcessInstruction(instructionForRegister0);
         sut.ProcessInstruction(instructionForRegister1);
@@ -274,7 +275,7 @@ public class Chip8Should
             registers, 
             InitialProgramCounter, 
             _stubbedRandomNumber,
-            _testOutputHelper);
+            _debugger);
 
         sut.ProcessInstruction(add5ToRegister0);
         sut.ProcessInstruction(add1ToRegister10);
@@ -300,7 +301,7 @@ public class Chip8Should
             registers, 
             InitialProgramCounter, 
             _stubbedRandomNumber,
-            _testOutputHelper);
+            _debugger);
 
         sut.ProcessInstruction(storeValueOfRegister15InRegister7);
         sut.ProcessInstruction(storeValueOfRegister6InRegister1);
@@ -337,7 +338,7 @@ public class Chip8Should
             registers, 
             InitialProgramCounter, 
             _stubbedRandomNumber,
-            _testOutputHelper);
+            _debugger);
 
         sut.ProcessInstruction(orRegister2WithRegister8AndStoreInRegister2);
 
@@ -373,7 +374,7 @@ public class Chip8Should
             registers, 
             InitialProgramCounter, 
             _stubbedRandomNumber,
-            _testOutputHelper);
+            _debugger);
 
         sut.ProcessInstruction(andRegister13WithRegister1AndStoreInRegister1);
 
@@ -409,7 +410,7 @@ public class Chip8Should
             registers, 
             InitialProgramCounter, 
             _stubbedRandomNumber,
-            _testOutputHelper);
+            _debugger);
 
         sut.ProcessInstruction(xorRegister8WithRegister2AndStoreInRegister2);
 
@@ -446,7 +447,7 @@ public class Chip8Should
             registers, 
             InitialProgramCounter, 
             _stubbedRandomNumber,
-            _testOutputHelper);
+            _debugger);
 
         sut.ProcessInstruction(xorRegister8WithRegister2AndStoreInRegister2);
 
@@ -483,7 +484,7 @@ public class Chip8Should
             registers, 
             InitialProgramCounter, 
             _stubbedRandomNumber,
-            _testOutputHelper);
+            _debugger);
 
         sut.ProcessInstruction(xorRegister8WithRegister2AndStoreInRegister2);
 
@@ -520,7 +521,7 @@ public class Chip8Should
             registers, 
             InitialProgramCounter, 
             _stubbedRandomNumber,
-            _testOutputHelper);
+            _debugger);
 
         sut.ProcessInstruction(xorRegister8WithRegister2AndStoreInRegister2);
 
@@ -557,7 +558,7 @@ public class Chip8Should
             registers, 
             InitialProgramCounter, 
             _stubbedRandomNumber,
-            _testOutputHelper);
+            _debugger);
 
         sut.ProcessInstruction(xorRegister8WithRegister2AndStoreInRegister2);
 
@@ -593,7 +594,7 @@ public class Chip8Should
             registers, 
             InitialProgramCounter, 
             _stubbedRandomNumber,
-            _testOutputHelper);
+            _debugger);
 
         sut.ProcessInstruction(instruction);
 
@@ -629,7 +630,7 @@ public class Chip8Should
             registers, 
             InitialProgramCounter, 
             _stubbedRandomNumber,
-            _testOutputHelper);
+            _debugger);
 
         sut.ProcessInstruction(instruction);
 
@@ -666,7 +667,7 @@ public class Chip8Should
             registers, 
             InitialProgramCounter, 
             _stubbedRandomNumber,
-            _testOutputHelper);
+            _debugger);
 
         sut.ProcessInstruction(instruction);
 
@@ -703,7 +704,7 @@ public class Chip8Should
             registers, 
             InitialProgramCounter, 
             _stubbedRandomNumber,
-            _testOutputHelper);
+            _debugger);
 
         sut.ProcessInstruction(instruction);
 
@@ -739,7 +740,7 @@ public class Chip8Should
             registers, 
             InitialProgramCounter, 
             _stubbedRandomNumber,
-            _testOutputHelper);
+            _debugger);
 
         sut.ProcessInstruction(instruction);
 
@@ -775,7 +776,7 @@ public class Chip8Should
             registers, 
             InitialProgramCounter, 
             _stubbedRandomNumber,
-            _testOutputHelper);
+            _debugger);
 
         sut.ProcessInstruction(instruction);
 
@@ -811,7 +812,7 @@ public class Chip8Should
             registers, 
             InitialProgramCounter, 
             _stubbedRandomNumber,
-            _testOutputHelper);
+            _debugger);
 
         sut.ProcessInstruction(instruction);
         
@@ -832,7 +833,7 @@ public class Chip8Should
             registers, 
             InitialProgramCounter, 
             _stubbedRandomNumber,
-            _testOutputHelper);
+            _debugger);
 
         sut.ProcessInstruction(instruction);
         
@@ -848,7 +849,7 @@ public class Chip8Should
             _emptyRegisters, 
             InitialProgramCounter, 
             _stubbedRandomNumber,
-            _testOutputHelper);
+            _debugger);
 
         sut.ProcessInstruction(instruction);
 
@@ -868,7 +869,7 @@ public class Chip8Should
             registers, 
             InitialProgramCounter, 
             _stubbedRandomNumber,
-            _testOutputHelper);
+            _debugger);
 
         sut.ProcessInstruction(instruction);
 
@@ -890,7 +891,7 @@ public class Chip8Should
             registers, 
             InitialProgramCounter, 
             RandomNumber,
-            _testOutputHelper);
+            _debugger);
 
         sut.ProcessInstruction(instruction);
         

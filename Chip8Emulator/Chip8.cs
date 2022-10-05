@@ -1,5 +1,4 @@
 using System.Text.RegularExpressions;
-using Xunit.Abstractions;
 
 namespace Chip8Emulator;
 
@@ -8,7 +7,7 @@ public class Chip8
     private const int F = 15;
 
     private readonly Func<int> _randomNumber;
-    private readonly ITestOutputHelper _testOutputHelper;
+    private readonly IDebugger _debugger;
     
     public byte[] Memory { get; } = new byte[4096];
 
@@ -17,13 +16,13 @@ public class Chip8
     public byte DelayTimer;
     public byte SoundTimer;
 
-    public Chip8(int[] v, int pc, Func<int> randomNumber, ITestOutputHelper testOutputHelper)
+    public Chip8(int[] v, int pc, Func<int> randomNumber, IDebugger debugger)
     {
         V = v;
         PC = pc;
         Stack = new Stack<int>();
         _randomNumber = randomNumber;
-        _testOutputHelper = testOutputHelper;
+        _debugger = debugger;
         
         new DigitSprites().CopyTo(Memory);
     }
