@@ -5,6 +5,8 @@ namespace Chip8Emulator;
 
 public class Chip8
 {
+    private const int F = 15;
+    
     private readonly ITestOutputHelper _testOutputHelper;
     public byte[] Memory { get; } = new byte[4096];
 
@@ -131,7 +133,7 @@ public class Chip8
 
             var addResult = V[x] + V[y];
 
-            V[15] = addResult > 255 ? 1 : 0;
+            V[F] = addResult > 255 ? 1 : 0;
 
             V[x] = addResult & 0xFF;
         }
@@ -140,7 +142,7 @@ public class Chip8
         {
             var (x, y) = MiddleTwoNibblesOf(instruction);
 
-            V[15] = V[x] > V[y] ? 1 : 0;
+            V[F] = V[x] > V[y] ? 1 : 0;
 
             V[x] -= V[y];
         }
@@ -149,7 +151,7 @@ public class Chip8
         {
             var (x, _) = MiddleTwoNibblesOf(instruction);
 
-            V[15] = (V[x] & 0x01) == 1 ? 1 : 0;
+            V[F] = (V[x] & 0x01) == 1 ? 1 : 0;
 
             V[x] /= 2;
         }
@@ -158,7 +160,7 @@ public class Chip8
         {
             var (x, y) = MiddleTwoNibblesOf(instruction);
 
-            V[15] = V[y] > V[x] ? 1 : 0;
+            V[F] = V[y] > V[x] ? 1 : 0;
 
             V[x] = V[y] - V[x];
         }
