@@ -144,6 +144,15 @@ public class Chip8
 
             V[registerToAssign] -= V[registerToSubtract];
         }
+        
+        if (Regex.IsMatch(instructionHex, "8..6"))
+        {
+            var (register, _) = MiddleTwoNibblesOf(instruction);
+
+            V[15] = (V[register] & 0x01) == 1 ? 1 : 0;
+
+            V[register] /= 2;
+        }
 
         if (Regex.IsMatch(instructionHex, "A..."))
         {
