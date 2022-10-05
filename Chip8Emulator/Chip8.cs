@@ -9,6 +9,7 @@ public class Chip8
 
     private readonly Func<int> _randomNumber;
     private readonly ITestOutputHelper _testOutputHelper;
+    
     public byte[] Memory { get; } = new byte[4096];
 
     public int[] V { get; }
@@ -23,6 +24,8 @@ public class Chip8
         Stack = new Stack<int>();
         _randomNumber = randomNumber;
         _testOutputHelper = testOutputHelper;
+        
+        new DigitSprites().CopyTo(Memory);
     }
 
     // This register is generally used to store memory addresses, so only the lowest (rightmost) 12 bits are usually used.

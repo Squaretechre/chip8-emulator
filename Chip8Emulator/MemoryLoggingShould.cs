@@ -21,7 +21,7 @@ public class MemoryLoggingShould
 
         gameInstructions.CopyTo(memory, 512);
 
-        PrintMemoryBinary(memory);
+        PrintMemory(memory);
     }
 
     [Fact]
@@ -250,22 +250,7 @@ public class MemoryLoggingShould
         return "Unknown";
     }
 
-    private void PrintMemoryHex(IReadOnlyList<byte> memory)
-    {
-        for (var i = 512; i < memory.Count; i += 2)
-        {
-            var instructionByte1 = memory[i];
-            var instructionByte2 = memory[i + 1];
-
-            var instruction = new[] { instructionByte1, instructionByte2 };
-
-            var instructionHexString = BitConverter.ToString(instruction).Replace("-", "");
-
-            _testOutputHelper.WriteLine(instructionHexString);
-        }
-    }
-
-    private void PrintMemoryBinary(IReadOnlyList<byte> memory)
+    private void PrintMemory(IReadOnlyList<byte> memory)
     {
         for (var i = 512; i < memory.Count; i += 2)
         {
@@ -275,9 +260,8 @@ public class MemoryLoggingShould
             var instructionBytes = new[] { instructionByte2, instructionByte1 };
 
             var instruction = BitConverter.ToInt16(instructionBytes, 0);
-            var binary = Convert.ToString(instruction, 2).PadLeft(16, '0');
 
-            _testOutputHelper.WriteLine(binary);
+            _testOutputHelper.WriteLine(instruction.ToBinaryString());
 
             var instructionBytesFromShort = BitConverter.GetBytes(instruction).Reverse().ToArray();
 
