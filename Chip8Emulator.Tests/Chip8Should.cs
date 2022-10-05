@@ -29,12 +29,12 @@ public class Chip8Should
             _stubbedRandomNumber,
             _debugger);
 
-        sut.ProcessInstruction(callSubroutineInstruction);
+        sut.Process(callSubroutineInstruction);
 
         Assert.Equal(806, sut.PC);
         Assert.Equal(500, sut.Stack.Peek());
 
-        sut.ProcessInstruction(returnFromSubroutineInstruction);
+        sut.Process(returnFromSubroutineInstruction);
 
         Assert.Equal(InitialProgramCounter, sut.PC);
         Assert.False(sut.Stack.Any());
@@ -51,7 +51,7 @@ public class Chip8Should
             _stubbedRandomNumber,
             _debugger);
 
-        sut.ProcessInstruction(instruction);
+        sut.Process(instruction);
 
         Assert.Equal(535, sut.PC);
     }
@@ -67,7 +67,7 @@ public class Chip8Should
             _stubbedRandomNumber,
             _debugger);
 
-        sut.ProcessInstruction(instruction);
+        sut.Process(instruction);
 
         Assert.Equal(806, sut.PC);
         Assert.Equal(520, sut.Stack.Peek());
@@ -88,7 +88,7 @@ public class Chip8Should
             _stubbedRandomNumber,
             _debugger);
 
-        sut.ProcessInstruction(instruction);
+        sut.Process(instruction);
 
         Assert.Equal(502, sut.PC);
     }
@@ -108,7 +108,7 @@ public class Chip8Should
             _stubbedRandomNumber,
             _debugger);
 
-        sut.ProcessInstruction(instruction);
+        sut.Process(instruction);
 
         Assert.Equal(500, sut.PC);
     }
@@ -128,7 +128,7 @@ public class Chip8Should
             _stubbedRandomNumber,
             _debugger);
 
-        sut.ProcessInstruction(instruction);
+        sut.Process(instruction);
 
         Assert.Equal(502, sut.PC);
     }
@@ -148,7 +148,7 @@ public class Chip8Should
             _stubbedRandomNumber,
             _debugger);
 
-        sut.ProcessInstruction(instruction);
+        sut.Process(instruction);
 
         Assert.Equal(500, sut.PC);
     }
@@ -169,7 +169,7 @@ public class Chip8Should
             _stubbedRandomNumber,
             _debugger);
 
-        sut.ProcessInstruction(instruction);
+        sut.Process(instruction);
 
         Assert.Equal(502, sut.PC);
     }
@@ -190,7 +190,7 @@ public class Chip8Should
             _stubbedRandomNumber,
             _debugger);
 
-        sut.ProcessInstruction(instruction);
+        sut.Process(instruction);
 
         Assert.Equal(500, sut.PC);
     }
@@ -223,22 +223,22 @@ public class Chip8Should
             _stubbedRandomNumber,
             _debugger);
 
-        sut.ProcessInstruction(instructionForRegister0);
-        sut.ProcessInstruction(instructionForRegister1);
-        sut.ProcessInstruction(instructionForRegister2);
-        sut.ProcessInstruction(instructionForRegister3);
-        sut.ProcessInstruction(instructionForRegister4);
-        sut.ProcessInstruction(instructionForRegister5);
-        sut.ProcessInstruction(instructionForRegister6);
-        sut.ProcessInstruction(instructionForRegister7);
-        sut.ProcessInstruction(instructionForRegister8);
-        sut.ProcessInstruction(instructionForRegister9);
-        sut.ProcessInstruction(instructionForRegister10);
-        sut.ProcessInstruction(instructionForRegister11);
-        sut.ProcessInstruction(instructionForRegister12);
-        sut.ProcessInstruction(instructionForRegister13);
-        sut.ProcessInstruction(instructionForRegister14);
-        sut.ProcessInstruction(instructionForRegister15);
+        sut.Process(instructionForRegister0);
+        sut.Process(instructionForRegister1);
+        sut.Process(instructionForRegister2);
+        sut.Process(instructionForRegister3);
+        sut.Process(instructionForRegister4);
+        sut.Process(instructionForRegister5);
+        sut.Process(instructionForRegister6);
+        sut.Process(instructionForRegister7);
+        sut.Process(instructionForRegister8);
+        sut.Process(instructionForRegister9);
+        sut.Process(instructionForRegister10);
+        sut.Process(instructionForRegister11);
+        sut.Process(instructionForRegister12);
+        sut.Process(instructionForRegister13);
+        sut.Process(instructionForRegister14);
+        sut.Process(instructionForRegister15);
 
         Assert.Equal(26, sut.V[0]);
         Assert.Equal(118, sut.V[1]);
@@ -277,9 +277,9 @@ public class Chip8Should
             _stubbedRandomNumber,
             _debugger);
 
-        sut.ProcessInstruction(add5ToRegister0);
-        sut.ProcessInstruction(add1ToRegister10);
-        sut.ProcessInstruction(add3ToRegister16);
+        sut.Process(add5ToRegister0);
+        sut.Process(add1ToRegister10);
+        sut.Process(add3ToRegister16);
 
         Assert.Equal(15, sut.V[0]);
         Assert.Equal(21, sut.V[10]);
@@ -303,8 +303,8 @@ public class Chip8Should
             _stubbedRandomNumber,
             _debugger);
 
-        sut.ProcessInstruction(storeValueOfRegister15InRegister7);
-        sut.ProcessInstruction(storeValueOfRegister6InRegister1);
+        sut.Process(storeValueOfRegister15InRegister7);
+        sut.Process(storeValueOfRegister6InRegister1);
 
         Assert.Equal(0, sut.V[0]);
         Assert.Equal(50, sut.V[1]);
@@ -340,7 +340,7 @@ public class Chip8Should
             _stubbedRandomNumber,
             _debugger);
 
-        sut.ProcessInstruction(orRegister2WithRegister8AndStoreInRegister2);
+        sut.Process(orRegister2WithRegister8AndStoreInRegister2);
 
         Assert.Equal(0, sut.V[0]);
         Assert.Equal(0, sut.V[1]);
@@ -376,7 +376,7 @@ public class Chip8Should
             _stubbedRandomNumber,
             _debugger);
 
-        sut.ProcessInstruction(andRegister13WithRegister1AndStoreInRegister1);
+        sut.Process(andRegister13WithRegister1AndStoreInRegister1);
 
         Assert.Equal(0, sut.V[0]);
         Assert.Equal(8, sut.V[1]);
@@ -412,7 +412,7 @@ public class Chip8Should
             _stubbedRandomNumber,
             _debugger);
 
-        sut.ProcessInstruction(xorRegister8WithRegister2AndStoreInRegister2);
+        sut.Process(xorRegister8WithRegister2AndStoreInRegister2);
 
         Assert.Equal(0, sut.V[0]);
         Assert.Equal(0, sut.V[1]);
@@ -449,7 +449,7 @@ public class Chip8Should
             _stubbedRandomNumber,
             _debugger);
 
-        sut.ProcessInstruction(xorRegister8WithRegister2AndStoreInRegister2);
+        sut.Process(xorRegister8WithRegister2AndStoreInRegister2);
 
         Assert.Equal(0, sut.V[0]);
         Assert.Equal(0, sut.V[1]);
@@ -486,7 +486,7 @@ public class Chip8Should
             _stubbedRandomNumber,
             _debugger);
 
-        sut.ProcessInstruction(xorRegister8WithRegister2AndStoreInRegister2);
+        sut.Process(xorRegister8WithRegister2AndStoreInRegister2);
 
         Assert.Equal(0, sut.V[0]);
         Assert.Equal(0, sut.V[1]);
@@ -523,7 +523,7 @@ public class Chip8Should
             _stubbedRandomNumber,
             _debugger);
 
-        sut.ProcessInstruction(xorRegister8WithRegister2AndStoreInRegister2);
+        sut.Process(xorRegister8WithRegister2AndStoreInRegister2);
 
         Assert.Equal(10, sut.V[0]);
         Assert.Equal(0, sut.V[1]);
@@ -560,7 +560,7 @@ public class Chip8Should
             _stubbedRandomNumber,
             _debugger);
 
-        sut.ProcessInstruction(xorRegister8WithRegister2AndStoreInRegister2);
+        sut.Process(xorRegister8WithRegister2AndStoreInRegister2);
 
         Assert.Equal(10, sut.V[0]);
         Assert.Equal(0, sut.V[1]);
@@ -596,7 +596,7 @@ public class Chip8Should
             _stubbedRandomNumber,
             _debugger);
 
-        sut.ProcessInstruction(instruction);
+        sut.Process(instruction);
 
         Assert.Equal(0, sut.V[0]);
         Assert.Equal(0, sut.V[1]);
@@ -632,7 +632,7 @@ public class Chip8Should
             _stubbedRandomNumber,
             _debugger);
 
-        sut.ProcessInstruction(instruction);
+        sut.Process(instruction);
 
         Assert.Equal(0, sut.V[0]);
         Assert.Equal(0, sut.V[1]);
@@ -669,7 +669,7 @@ public class Chip8Should
             _stubbedRandomNumber,
             _debugger);
 
-        sut.ProcessInstruction(instruction);
+        sut.Process(instruction);
 
         Assert.Equal(0, sut.V[0]);
         Assert.Equal(0, sut.V[1]);
@@ -706,7 +706,7 @@ public class Chip8Should
             _stubbedRandomNumber,
             _debugger);
 
-        sut.ProcessInstruction(instruction);
+        sut.Process(instruction);
 
         Assert.Equal(0, sut.V[0]);
         Assert.Equal(0, sut.V[1]);
@@ -742,7 +742,7 @@ public class Chip8Should
             _stubbedRandomNumber,
             _debugger);
 
-        sut.ProcessInstruction(instruction);
+        sut.Process(instruction);
 
         Assert.Equal(0, sut.V[0]);
         Assert.Equal(256, sut.V[1]);
@@ -778,7 +778,7 @@ public class Chip8Should
             _stubbedRandomNumber,
             _debugger);
 
-        sut.ProcessInstruction(instruction);
+        sut.Process(instruction);
 
         Assert.Equal(0, sut.V[0]);
         Assert.Equal(254, sut.V[1]);
@@ -814,7 +814,7 @@ public class Chip8Should
             _stubbedRandomNumber,
             _debugger);
 
-        sut.ProcessInstruction(instruction);
+        sut.Process(instruction);
         
         Assert.Equal(502, sut.PC);
     }
@@ -835,7 +835,7 @@ public class Chip8Should
             _stubbedRandomNumber,
             _debugger);
 
-        sut.ProcessInstruction(instruction);
+        sut.Process(instruction);
         
         Assert.Equal(500, sut.PC);
     }
@@ -851,7 +851,7 @@ public class Chip8Should
             _stubbedRandomNumber,
             _debugger);
 
-        sut.ProcessInstruction(instruction);
+        sut.Process(instruction);
 
         Assert.Equal(692, sut.I);
     }
@@ -871,7 +871,7 @@ public class Chip8Should
             _stubbedRandomNumber,
             _debugger);
 
-        sut.ProcessInstruction(instruction);
+        sut.Process(instruction);
 
         Assert.Equal(585, sut.PC);
     }
@@ -893,7 +893,7 @@ public class Chip8Should
             RandomNumber,
             _debugger);
 
-        sut.ProcessInstruction(instruction);
+        sut.Process(instruction);
         
         Assert.Equal(0, sut.V[0]);
         Assert.Equal(16, sut.V[1]);
