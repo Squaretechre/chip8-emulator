@@ -4,22 +4,29 @@ namespace Chip8Emulator;
 
 public class Chip8Should
 {
+    private const int InitialProgramCounter = 500;
     private readonly ITestOutputHelper _testOutputHelper;
+    private readonly Func<int> _stubbedRandomNumber;
+    private int[] _emptyRegisters;
 
     public Chip8Should(ITestOutputHelper testOutputHelper)
     {
         _testOutputHelper = testOutputHelper;
+        _stubbedRandomNumber = () => 1;
+        _emptyRegisters = Array.Empty<int>();
     }
 
     [Fact(DisplayName = "00EE - RET - Return from a subroutine.")]
     public void process_instruction_00ee()
     {
-        const int initialProgramCounterLocation = 500;
-
         var callSubroutineInstruction = Convert.ToInt16("0x2326", 16);
         var returnFromSubroutineInstruction = Convert.ToInt16("0x00EE", 16);
 
-        var sut = new Chip8(Array.Empty<int>(), initialProgramCounterLocation, _testOutputHelper);
+        var sut = new Chip8(
+            _emptyRegisters, 
+            InitialProgramCounter, 
+            _stubbedRandomNumber,
+            _testOutputHelper);
 
         sut.ProcessInstruction(callSubroutineInstruction);
 
@@ -28,8 +35,8 @@ public class Chip8Should
 
         sut.ProcessInstruction(returnFromSubroutineInstruction);
 
-        Assert.Equal(initialProgramCounterLocation, sut.PC);
-        Assert.True(IsEmpty(sut.Stack));
+        Assert.Equal(InitialProgramCounter, sut.PC);
+        Assert.False(sut.Stack.Any());
     }
 
     [Fact(DisplayName = "1nnn - JP addr - Jump to location nnn.")]
@@ -37,7 +44,11 @@ public class Chip8Should
     {
         var instruction = Convert.ToInt16("0x1217", 16);
 
-        var sut = new Chip8(Array.Empty<int>(), 500, _testOutputHelper);
+        var sut = new Chip8(
+            _emptyRegisters, 
+            InitialProgramCounter, 
+            _stubbedRandomNumber,
+            _testOutputHelper);
 
         sut.ProcessInstruction(instruction);
 
@@ -49,7 +60,11 @@ public class Chip8Should
     {
         var instruction = Convert.ToInt16("0x2326", 16);
 
-        var sut = new Chip8(Array.Empty<int>(), 520, _testOutputHelper);
+        var sut = new Chip8(
+            _emptyRegisters, 
+            520, 
+            _stubbedRandomNumber,
+            _testOutputHelper);
 
         sut.ProcessInstruction(instruction);
 
@@ -66,7 +81,11 @@ public class Chip8Should
 
         var instruction = Convert.ToInt16("0x3340", 16);
 
-        var sut = new Chip8(registers, 500, _testOutputHelper);
+        var sut = new Chip8(
+            registers, 
+            InitialProgramCounter, 
+            _stubbedRandomNumber,
+            _testOutputHelper);
 
         sut.ProcessInstruction(instruction);
 
@@ -82,7 +101,11 @@ public class Chip8Should
 
         var instruction = Convert.ToInt16("0x3340", 16);
 
-        var sut = new Chip8(registers, 500, _testOutputHelper);
+        var sut = new Chip8(
+            registers, 
+            InitialProgramCounter, 
+            _stubbedRandomNumber,
+            _testOutputHelper);
 
         sut.ProcessInstruction(instruction);
 
@@ -98,7 +121,11 @@ public class Chip8Should
 
         var instruction = Convert.ToInt16("0x4918", 16);
 
-        var sut = new Chip8(registers, 500, _testOutputHelper);
+        var sut = new Chip8(
+            registers, 
+            InitialProgramCounter, 
+            _stubbedRandomNumber,
+            _testOutputHelper);
 
         sut.ProcessInstruction(instruction);
 
@@ -114,7 +141,11 @@ public class Chip8Should
 
         var instruction = Convert.ToInt16("0x4918", 16);
 
-        var sut = new Chip8(registers, 500, _testOutputHelper);
+        var sut = new Chip8(
+            registers, 
+            InitialProgramCounter, 
+            _stubbedRandomNumber,
+            _testOutputHelper);
 
         sut.ProcessInstruction(instruction);
 
@@ -131,7 +162,11 @@ public class Chip8Should
 
         var instruction = Convert.ToInt16("0x5A20", 16);
 
-        var sut = new Chip8(registers, 500, _testOutputHelper);
+        var sut = new Chip8(
+            registers, 
+            InitialProgramCounter, 
+            _stubbedRandomNumber,
+            _testOutputHelper);
 
         sut.ProcessInstruction(instruction);
 
@@ -148,7 +183,11 @@ public class Chip8Should
 
         var instruction = Convert.ToInt16("0x5A20", 16);
 
-        var sut = new Chip8(registers, 500, _testOutputHelper);
+        var sut = new Chip8(
+            registers, 
+            InitialProgramCounter, 
+            _stubbedRandomNumber,
+            _testOutputHelper);
 
         sut.ProcessInstruction(instruction);
 
@@ -177,7 +216,11 @@ public class Chip8Should
         var instructionForRegister14 = Convert.ToInt16("0x6E05", 16);
         var instructionForRegister15 = Convert.ToInt16("0x6F06", 16);
 
-        var sut = new Chip8(registers, 500, _testOutputHelper);
+        var sut = new Chip8(
+            registers, 
+            InitialProgramCounter, 
+            _stubbedRandomNumber,
+            _testOutputHelper);
 
         sut.ProcessInstruction(instructionForRegister0);
         sut.ProcessInstruction(instructionForRegister1);
@@ -227,7 +270,11 @@ public class Chip8Should
         var add1ToRegister10 = Convert.ToInt16("0x7A01", 16);
         var add3ToRegister16 = Convert.ToInt16("0x7F03", 16);
 
-        var sut = new Chip8(registers, 500, _testOutputHelper);
+        var sut = new Chip8(
+            registers, 
+            InitialProgramCounter, 
+            _stubbedRandomNumber,
+            _testOutputHelper);
 
         sut.ProcessInstruction(add5ToRegister0);
         sut.ProcessInstruction(add1ToRegister10);
@@ -249,7 +296,11 @@ public class Chip8Should
         var storeValueOfRegister15InRegister7 = Convert.ToInt16("0x87F0", 16);
         var storeValueOfRegister6InRegister1 = Convert.ToInt16("0x8160", 16);
 
-        var sut = new Chip8(registers, 500, _testOutputHelper);
+        var sut = new Chip8(
+            registers, 
+            InitialProgramCounter, 
+            _stubbedRandomNumber,
+            _testOutputHelper);
 
         sut.ProcessInstruction(storeValueOfRegister15InRegister7);
         sut.ProcessInstruction(storeValueOfRegister6InRegister1);
@@ -282,7 +333,11 @@ public class Chip8Should
 
         var orRegister2WithRegister8AndStoreInRegister2 = Convert.ToInt16("0x8281", 16);
 
-        var sut = new Chip8(registers, 500, _testOutputHelper);
+        var sut = new Chip8(
+            registers, 
+            InitialProgramCounter, 
+            _stubbedRandomNumber,
+            _testOutputHelper);
 
         sut.ProcessInstruction(orRegister2WithRegister8AndStoreInRegister2);
 
@@ -314,7 +369,11 @@ public class Chip8Should
 
         var andRegister13WithRegister1AndStoreInRegister1 = Convert.ToInt16("0x81D2", 16);
 
-        var sut = new Chip8(registers, 500, _testOutputHelper);
+        var sut = new Chip8(
+            registers, 
+            InitialProgramCounter, 
+            _stubbedRandomNumber,
+            _testOutputHelper);
 
         sut.ProcessInstruction(andRegister13WithRegister1AndStoreInRegister1);
 
@@ -346,7 +405,11 @@ public class Chip8Should
 
         var xorRegister8WithRegister2AndStoreInRegister2 = Convert.ToInt16("0x8283", 16);
 
-        var sut = new Chip8(registers, 500, _testOutputHelper);
+        var sut = new Chip8(
+            registers, 
+            InitialProgramCounter, 
+            _stubbedRandomNumber,
+            _testOutputHelper);
 
         sut.ProcessInstruction(xorRegister8WithRegister2AndStoreInRegister2);
 
@@ -379,7 +442,11 @@ public class Chip8Should
 
         var xorRegister8WithRegister2AndStoreInRegister2 = Convert.ToInt16("0x8674", 16);
 
-        var sut = new Chip8(registers, 500, _testOutputHelper);
+        var sut = new Chip8(
+            registers, 
+            InitialProgramCounter, 
+            _stubbedRandomNumber,
+            _testOutputHelper);
 
         sut.ProcessInstruction(xorRegister8WithRegister2AndStoreInRegister2);
 
@@ -412,7 +479,11 @@ public class Chip8Should
 
         var xorRegister8WithRegister2AndStoreInRegister2 = Convert.ToInt16("0x8674", 16);
 
-        var sut = new Chip8(registers, 500, _testOutputHelper);
+        var sut = new Chip8(
+            registers, 
+            InitialProgramCounter, 
+            _stubbedRandomNumber,
+            _testOutputHelper);
 
         sut.ProcessInstruction(xorRegister8WithRegister2AndStoreInRegister2);
 
@@ -445,7 +516,11 @@ public class Chip8Should
 
         var xorRegister8WithRegister2AndStoreInRegister2 = Convert.ToInt16("0x8805", 16);
 
-        var sut = new Chip8(registers, 500, _testOutputHelper);
+        var sut = new Chip8(
+            registers, 
+            InitialProgramCounter, 
+            _stubbedRandomNumber,
+            _testOutputHelper);
 
         sut.ProcessInstruction(xorRegister8WithRegister2AndStoreInRegister2);
 
@@ -478,7 +553,11 @@ public class Chip8Should
 
         var xorRegister8WithRegister2AndStoreInRegister2 = Convert.ToInt16("0x8805", 16);
 
-        var sut = new Chip8(registers, 500, _testOutputHelper);
+        var sut = new Chip8(
+            registers, 
+            InitialProgramCounter, 
+            _stubbedRandomNumber,
+            _testOutputHelper);
 
         sut.ProcessInstruction(xorRegister8WithRegister2AndStoreInRegister2);
 
@@ -510,7 +589,11 @@ public class Chip8Should
 
         var instruction = Convert.ToInt16("0x8506", 16);
 
-        var sut = new Chip8(registers, 500, _testOutputHelper);
+        var sut = new Chip8(
+            registers, 
+            InitialProgramCounter, 
+            _stubbedRandomNumber,
+            _testOutputHelper);
 
         sut.ProcessInstruction(instruction);
 
@@ -542,7 +625,11 @@ public class Chip8Should
 
         var instruction = Convert.ToInt16("0x8506", 16);
 
-        var sut = new Chip8(registers, 500, _testOutputHelper);
+        var sut = new Chip8(
+            registers, 
+            InitialProgramCounter, 
+            _stubbedRandomNumber,
+            _testOutputHelper);
 
         sut.ProcessInstruction(instruction);
 
@@ -575,7 +662,11 @@ public class Chip8Should
 
         var instruction = Convert.ToInt16("0x8347", 16);
 
-        var sut = new Chip8(registers, 500, _testOutputHelper);
+        var sut = new Chip8(
+            registers, 
+            InitialProgramCounter, 
+            _stubbedRandomNumber,
+            _testOutputHelper);
 
         sut.ProcessInstruction(instruction);
 
@@ -608,7 +699,11 @@ public class Chip8Should
 
         var instruction = Convert.ToInt16("0x8347", 16);
 
-        var sut = new Chip8(registers, 500, _testOutputHelper);
+        var sut = new Chip8(
+            registers, 
+            InitialProgramCounter, 
+            _stubbedRandomNumber,
+            _testOutputHelper);
 
         sut.ProcessInstruction(instruction);
 
@@ -640,7 +735,11 @@ public class Chip8Should
 
         var instruction = Convert.ToInt16("0x812E", 16);
 
-        var sut = new Chip8(registers, 500, _testOutputHelper);
+        var sut = new Chip8(
+            registers, 
+            InitialProgramCounter, 
+            _stubbedRandomNumber,
+            _testOutputHelper);
 
         sut.ProcessInstruction(instruction);
 
@@ -672,7 +771,11 @@ public class Chip8Should
 
         var instruction = Convert.ToInt16("0x812E", 16);
 
-        var sut = new Chip8(registers, 500, _testOutputHelper);
+        var sut = new Chip8(
+            registers, 
+            InitialProgramCounter, 
+            _stubbedRandomNumber,
+            _testOutputHelper);
 
         sut.ProcessInstruction(instruction);
 
@@ -704,7 +807,11 @@ public class Chip8Should
 
         var instruction = Convert.ToInt16("0x9120", 16);
 
-        var sut = new Chip8(registers, 500, _testOutputHelper);
+        var sut = new Chip8(
+            registers, 
+            InitialProgramCounter, 
+            _stubbedRandomNumber,
+            _testOutputHelper);
 
         sut.ProcessInstruction(instruction);
         
@@ -721,7 +828,11 @@ public class Chip8Should
 
         var instruction = Convert.ToInt16("0x9120", 16);
 
-        var sut = new Chip8(registers, 500, _testOutputHelper);
+        var sut = new Chip8(
+            registers, 
+            InitialProgramCounter, 
+            _stubbedRandomNumber,
+            _testOutputHelper);
 
         sut.ProcessInstruction(instruction);
         
@@ -733,7 +844,11 @@ public class Chip8Should
     {
         var instruction = Convert.ToInt16("0xA2B4", 16);
 
-        var sut = new Chip8(Array.Empty<int>(), 500, _testOutputHelper);
+        var sut = new Chip8(
+            _emptyRegisters, 
+            InitialProgramCounter, 
+            _stubbedRandomNumber,
+            _testOutputHelper);
 
         sut.ProcessInstruction(instruction);
 
@@ -749,17 +864,51 @@ public class Chip8Should
 
         var instruction = Convert.ToInt16("0xB23F", 16);
 
-        var sut = new Chip8(registers, 500, _testOutputHelper);
+        var sut = new Chip8(
+            registers, 
+            InitialProgramCounter, 
+            _stubbedRandomNumber,
+            _testOutputHelper);
 
         sut.ProcessInstruction(instruction);
 
         Assert.Equal(585, sut.PC);
     }
+    
+    [Fact(DisplayName = "Cxkk - RND Vx, byte - Set Vx = random byte AND kk.")]
+    public void process_instruction_cxkk()
+    {
+        var registers = new int[16];
 
+        registers[1] = 0;
 
-    private static bool IsEmpty(Stack<int> stack)
-        => ExceptionMessageFor(() => stack.Peek()).Equals("Stack empty.");
+        var instruction = Convert.ToInt16("0xC13B", 16);
 
-    private static string ExceptionMessageFor(Action action)
-        => Record.Exception(action)!.Message;
+        int RandomNumber() => 20;
+
+        var sut = new Chip8(
+            registers, 
+            InitialProgramCounter, 
+            RandomNumber,
+            _testOutputHelper);
+
+        sut.ProcessInstruction(instruction);
+        
+        Assert.Equal(0, sut.V[0]);
+        Assert.Equal(16, sut.V[1]);
+        Assert.Equal(0, sut.V[2]);
+        Assert.Equal(0, sut.V[3]);
+        Assert.Equal(0, sut.V[4]);
+        Assert.Equal(0, sut.V[5]);
+        Assert.Equal(0, sut.V[6]);
+        Assert.Equal(0, sut.V[7]);
+        Assert.Equal(0, sut.V[8]);
+        Assert.Equal(0, sut.V[9]);
+        Assert.Equal(0, sut.V[10]);
+        Assert.Equal(0, sut.V[11]);
+        Assert.Equal(0, sut.V[12]);
+        Assert.Equal(0, sut.V[13]);
+        Assert.Equal(0, sut.V[14]);
+        Assert.Equal(0, sut.V[15]);
+    }
 }

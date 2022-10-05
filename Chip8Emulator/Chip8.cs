@@ -6,7 +6,8 @@ namespace Chip8Emulator;
 public class Chip8
 {
     private const int F = 15;
-    
+
+    private readonly Func<int> _randomNumber;
     private readonly ITestOutputHelper _testOutputHelper;
     public byte[] Memory { get; } = new byte[4096];
 
@@ -15,11 +16,12 @@ public class Chip8
     public byte DelayTimer;
     public byte SoundTimer;
 
-    public Chip8(int[] v, int pc, ITestOutputHelper testOutputHelper)
+    public Chip8(int[] v, int pc, Func<int> randomNumber, ITestOutputHelper testOutputHelper)
     {
         V = v;
         PC = pc;
         Stack = new Stack<int>();
+        _randomNumber = randomNumber;
         _testOutputHelper = testOutputHelper;
     }
 
@@ -191,6 +193,15 @@ public class Chip8
         if (Regex.IsMatch(instructionHex, "B..."))
         {
             PC = Lower12BitsOf(instruction) + V[0];
+        }
+        
+        if (Regex.IsMatch(instructionHex, "C..."))
+        {
+            var (upperByte, kk) = UpperAndLowerBytesOf(instruction);
+
+            var x = LowerNibbleOf(upperByte);
+
+            V[x] = _randomNumber() & kk;
         }
     }
 
