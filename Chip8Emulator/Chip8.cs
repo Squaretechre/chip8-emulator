@@ -202,5 +202,14 @@ public class Chip8
 
             V[x] = _randomNumber() & kk;
         }
+        
+        if (instruction.Matches("F.1E"))
+        {
+            var (upperByte, _) = instruction.UpperAndLowerBytes();
+
+            var x = upperByte.LowerNibble();
+
+            I += V[x];
+        }
     }
 }

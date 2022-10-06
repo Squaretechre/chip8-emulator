@@ -912,4 +912,28 @@ public class Chip8Should
         Assert.Equal(0, sut.V[14]);
         Assert.Equal(0, sut.V[15]);
     }
+    
+    [Fact(DisplayName = "Fx1E - ADD I, Vx - Set I = I + Vx.")]
+    public void process_instruction_fx1e()
+    {
+        var registers = new int[16];
+
+        registers[4] = 10;
+        
+        var setITo692 = Convert.ToInt16("0xA2B4", 16);
+        var addVxToIAndStoreInI = Convert.ToInt16("0xF41E", 16);
+
+        int RandomNumber() => 20;
+
+        var sut = new Chip8(
+            registers, 
+            InitialProgramCounter, 
+            RandomNumber,
+            _debugger);
+
+        sut.Process(setITo692);
+        sut.Process(addVxToIAndStoreInI);
+       
+        Assert.Equal(702, sut.I);
+    }
 }
