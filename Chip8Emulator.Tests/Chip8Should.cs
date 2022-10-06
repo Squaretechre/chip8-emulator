@@ -966,4 +966,28 @@ public class Chip8Should
        
         Assert.Equal(expectedMemoryLocation, sut.I);
     }
+    
+    [Fact(DisplayName = "Fx33 - LD B, Vx - Store BCD representation of Vx in memory locations I, I+1, and I+2.")]
+    public void store_the_bcd_representation_of_vx_in_i_i_plus_1_and_i_plus_2_when_processing_instruction_fx33()
+    {
+        var registers = new int[16];
+
+        registers[10] = 255;
+        
+        var setITo692 = Convert.ToInt16("0xA2B4", 16);
+        var addVxToIAndStoreInI = Convert.ToInt16("0xFA33", 16);
+
+        var sut = new Chip8(
+            registers, 
+            InitialProgramCounter, 
+            _stubbedRandomNumber,
+            _debugger);
+
+        sut.Process(setITo692);
+        sut.Process(addVxToIAndStoreInI);
+       
+        Assert.Equal(2, sut.Memory[692]);
+        Assert.Equal(5, sut.Memory[693]);
+        Assert.Equal(5, sut.Memory[694]);
+    }
 }

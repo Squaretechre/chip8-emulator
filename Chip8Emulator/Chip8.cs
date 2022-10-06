@@ -222,5 +222,26 @@ public class Chip8
 
             I = _digitSprites.MemoryLocationFor(x);
         }
+        
+        if (instruction.Matches("F.33"))
+        {
+            var (upperByte, _) = instruction.UpperAndLowerBytes();
+
+            var x = upperByte.LowerNibble();
+
+            var registerParts = V[x]
+                .ToString("D3")
+                .Select(char.GetNumericValue)
+                .Select(Convert.ToByte)
+                .ToList();
+
+            var hundreds = registerParts[0];
+            var tens = registerParts[1];
+            var ones = registerParts[2];
+            
+            Memory[I] = hundreds;
+            Memory[I + 1] = tens;
+            Memory[I + 2] = ones;
+        }
     }
 }
