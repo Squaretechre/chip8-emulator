@@ -1016,4 +1016,46 @@ public class Chip8Should
         Assert.Equal(20, sut.Memory[693]);
         Assert.Equal(30, sut.Memory[694]);
     }
+    
+    [Fact(DisplayName = "Fx65 - LD Vx, [I] - Read registers V0 through Vx from memory starting at location I.")]
+    public void process_instruction_fx65()
+    {
+        var registers = new int[16];
+
+        registers[0] = 0;
+        registers[1] = 0;
+        registers[2] = 0;
+        registers[10] = 254;
+        
+        var setITo692 = Convert.ToInt16("0xA2B4", 16);
+        var storeBcdRepresentationOfVxInMemory = Convert.ToInt16("0xFA33", 16);
+        var readRegistersV0ThroughVxFromMemoryStartingAtI = Convert.ToInt16("0xF265", 16);
+
+        var sut = new Chip8(
+            registers, 
+            InitialProgramCounter, 
+            _stubbedRandomNumber,
+            _debugger);
+
+        sut.Process(setITo692);
+        sut.Process(storeBcdRepresentationOfVxInMemory);
+        sut.Process(readRegistersV0ThroughVxFromMemoryStartingAtI);
+       
+        Assert.Equal(2, sut.V[0]);
+        Assert.Equal(5, sut.V[1]);
+        Assert.Equal(4, sut.V[2]);
+        Assert.Equal(0, sut.V[3]);
+        Assert.Equal(0, sut.V[4]);
+        Assert.Equal(0, sut.V[5]);
+        Assert.Equal(0, sut.V[6]);
+        Assert.Equal(0, sut.V[7]);
+        Assert.Equal(0, sut.V[8]);
+        Assert.Equal(0, sut.V[9]);
+        Assert.Equal(254, sut.V[10]);
+        Assert.Equal(0, sut.V[11]);
+        Assert.Equal(0, sut.V[12]);
+        Assert.Equal(0, sut.V[13]);
+        Assert.Equal(0, sut.V[14]);
+        Assert.Equal(0, sut.V[15]);
+    }
 }

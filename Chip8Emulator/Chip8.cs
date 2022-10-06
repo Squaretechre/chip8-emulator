@@ -255,5 +255,17 @@ public class Chip8
                 Memory[I + register] = Convert.ToByte(V[register]);
             }
         }
+        
+        if (instruction.Matches("F.65"))
+        {
+            var (upperByte, _) = instruction.UpperAndLowerBytes();
+
+            var x = upperByte.LowerNibble();
+
+            for (var register = 0; register <= x; register++)
+            {
+                V[register] = Memory[I + register];
+            }
+        }
     }
 }
