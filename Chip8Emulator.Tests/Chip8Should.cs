@@ -923,17 +923,47 @@ public class Chip8Should
         var setITo692 = Convert.ToInt16("0xA2B4", 16);
         var addVxToIAndStoreInI = Convert.ToInt16("0xF41E", 16);
 
-        int RandomNumber() => 20;
-
         var sut = new Chip8(
             registers, 
             InitialProgramCounter, 
-            RandomNumber,
+            _stubbedRandomNumber,
             _debugger);
 
         sut.Process(setITo692);
         sut.Process(addVxToIAndStoreInI);
        
         Assert.Equal(702, sut.I);
+    }
+    
+    [Theory(DisplayName = "Fx28 - LD F, Vx - Set I = location of sprite for digit Vx.")]
+    [InlineData("0", 0)]
+    [InlineData("1", 5)]
+    [InlineData("2", 10)]
+    [InlineData("3", 15)]
+    [InlineData("4", 20)]
+    [InlineData("5", 25)]
+    [InlineData("6", 30)]
+    [InlineData("7", 35)]
+    [InlineData("8", 40)]
+    [InlineData("9", 45)]
+    [InlineData("A", 50)]
+    [InlineData("B", 55)]
+    [InlineData("C", 60)]
+    [InlineData("D", 65)]
+    [InlineData("E", 70)]
+    [InlineData("F", 75)]
+    public void process_instruction_fx29(string digitSpriteX, int expectedMemoryLocation)
+    {
+        var sut = new Chip8(
+            _emptyRegisters, 
+            InitialProgramCounter, 
+            _stubbedRandomNumber,
+            _debugger);
+
+        var setIToAddressOfDigitSprite0 = Convert.ToInt16($"0xF{digitSpriteX}29", 16);
+
+        sut.Process(setIToAddressOfDigitSprite0);
+       
+        Assert.Equal(expectedMemoryLocation, sut.I);
     }
 }

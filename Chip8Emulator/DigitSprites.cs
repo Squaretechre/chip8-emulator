@@ -2,6 +2,7 @@ namespace Chip8Emulator;
 
 public class DigitSprites
 {
+    private const int Chip8DigitSpriteLengthInBytes = 5;
     private readonly byte[] _zero = { 0xF0, 0x90, 0x90, 0x90, 0xF0 };
     private readonly byte[] _one = { 0x20, 0x60, 0x20, 0x20, 0x70 };
     private readonly byte[] _two = { 0xF0, 0x10, 0xF0, 0x80, 0xF0 };
@@ -31,7 +32,12 @@ public class DigitSprites
         foreach (var sprite in sprites)
         {
             sprite.CopyTo(memory, offset);
-            offset += 5;
+            offset += Chip8DigitSpriteLengthInBytes;
         }
+    }
+
+    public int MemoryLocationFor(int digit)
+    {
+        return digit * Chip8DigitSpriteLengthInBytes;
     }
 }

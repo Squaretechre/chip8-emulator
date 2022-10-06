@@ -15,6 +15,7 @@ public class Chip8
 
     public byte DelayTimer;
     public byte SoundTimer;
+    private readonly DigitSprites _digitSprites;
 
     public Chip8(int[] v, int pc, Func<int> randomNumber, IDebugger debugger)
     {
@@ -23,8 +24,9 @@ public class Chip8
         Stack = new Stack<int>();
         _randomNumber = randomNumber;
         _debugger = debugger;
+        _digitSprites = new DigitSprites();
         
-        new DigitSprites().CopyTo(Memory);
+        _digitSprites.CopyTo(Memory);
     }
 
     public int I { get; private set; }
@@ -210,6 +212,15 @@ public class Chip8
             var x = upperByte.LowerNibble();
 
             I += V[x];
+        }
+        
+        if (instruction.Matches("F.29"))
+        {
+            var (upperByte, _) = instruction.UpperAndLowerBytes();
+
+            var x = upperByte.LowerNibble();
+
+            I = _digitSprites.MemoryLocationFor(x);
         }
     }
 }
