@@ -968,14 +968,14 @@ public class Chip8Should
     }
     
     [Fact(DisplayName = "Fx33 - LD B, Vx - Store BCD representation of Vx in memory locations I, I+1, and I+2.")]
-    public void store_the_bcd_representation_of_vx_in_i_i_plus_1_and_i_plus_2_when_processing_instruction_fx33()
+    public void process_instruction_fx33()
     {
         var registers = new int[16];
 
         registers[10] = 255;
         
         var setITo692 = Convert.ToInt16("0xA2B4", 16);
-        var addVxToIAndStoreInI = Convert.ToInt16("0xFA33", 16);
+        var storeBcdRepresentationOfVxInMemory = Convert.ToInt16("0xFA33", 16);
 
         var sut = new Chip8(
             registers, 
@@ -984,10 +984,36 @@ public class Chip8Should
             _debugger);
 
         sut.Process(setITo692);
-        sut.Process(addVxToIAndStoreInI);
+        sut.Process(storeBcdRepresentationOfVxInMemory);
        
         Assert.Equal(2, sut.Memory[692]);
         Assert.Equal(5, sut.Memory[693]);
         Assert.Equal(5, sut.Memory[694]);
+    }
+    
+    [Fact(DisplayName = "Fx55 - LD [I], Vx - Store registers V0 through Vx in memory starting at location I.")]
+    public void process_instruction_fx55()
+    {
+        var registers = new int[16];
+
+        registers[0] = 10;
+        registers[1] = 20;
+        registers[2] = 30;
+        
+        var setITo692 = Convert.ToInt16("0xA2B4", 16);
+        var storeRegistersV0ThroughVxInMemoryStartingAtI = Convert.ToInt16("0xF255", 16);
+
+        var sut = new Chip8(
+            registers, 
+            InitialProgramCounter, 
+            _stubbedRandomNumber,
+            _debugger);
+
+        sut.Process(setITo692);
+        sut.Process(storeRegistersV0ThroughVxInMemoryStartingAtI);
+       
+        Assert.Equal(10, sut.Memory[692]);
+        Assert.Equal(20, sut.Memory[693]);
+        Assert.Equal(30, sut.Memory[694]);
     }
 }
