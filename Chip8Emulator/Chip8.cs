@@ -50,17 +50,20 @@ public class Chip8
         if (instruction.Matches("00EE"))
         {
             PC = Stack.Pop();
+            return;
         }
 
         if (instruction.Matches("1..."))
         {
             PC = instruction.Lower12Bits();
+            return;
         }
 
         if (instruction.Matches("2..."))
         {
             Stack.Push(PC);
             PC = instruction.Lower12Bits();
+            return;
         }
 
         if (instruction.Matches("3..."))
@@ -69,9 +72,7 @@ public class Chip8
 
             var x = upperByte.LowerNibble();
 
-            if (V[x] != valueToCompare) return;
-
-            PC += 2;
+            if (V[x] == valueToCompare) PC += 2;
         }
 
         if (instruction.Matches("4..."))
@@ -80,18 +81,14 @@ public class Chip8
 
             var x = upperByte.LowerNibble();
 
-            if (V[x] == valueToCompare) return;
-
-            PC += 2;
+            if (V[x] != valueToCompare) PC += 2;
         }
 
         if (instruction.Matches("5..0"))
         {
             var (x, y) = instruction.MiddleTwoNibbles();
 
-            if (V[x] != V[y]) return;
-
-            PC += 2;
+            if (V[x] == V[y]) PC += 2;
         }
 
         if (instruction.Matches("6..."))
@@ -191,9 +188,7 @@ public class Chip8
         {
             var (x, y) = instruction.MiddleTwoNibbles();
 
-            if (V[x] == V[y]) return;
-
-            PC += 2;
+            if (V[x] != V[y]) PC += 2;
         }
 
         if (instruction.Matches("A..."))
@@ -204,6 +199,7 @@ public class Chip8
         if (instruction.Matches("B..."))
         {
             PC = instruction.Lower12Bits() + V[0];
+            return;
         }
         
         if (instruction.Matches("C..."))
@@ -295,5 +291,7 @@ public class Chip8
                 V[register] = Memory[I + register];
             }
         }
+
+        PC += 2;
     }
 }

@@ -90,7 +90,7 @@ public class Chip8Should
 
         sut.Process(instruction);
 
-        Assert.Equal(502, sut.PC);
+        Assert.Equal(504, sut.PC);
     }
 
     [Fact(DisplayName = "3xkk - SE Vx, byte - Skip next instruction if Vx = kk. When Vx != kk.")]
@@ -110,7 +110,7 @@ public class Chip8Should
 
         sut.Process(instruction);
 
-        Assert.Equal(500, sut.PC);
+        Assert.Equal(502, sut.PC);
     }
 
     [Fact(DisplayName = "4xkk - SNE Vx, byte - Skip next instruction if Vx != kk. When Vx != kk.")]
@@ -130,7 +130,7 @@ public class Chip8Should
 
         sut.Process(instruction);
 
-        Assert.Equal(502, sut.PC);
+        Assert.Equal(504, sut.PC);
     }
 
     [Fact(DisplayName = "4xkk - SNE Vx, byte - Skip next instruction if Vx != kk. When Vx = kk.")]
@@ -150,7 +150,7 @@ public class Chip8Should
 
         sut.Process(instruction);
 
-        Assert.Equal(500, sut.PC);
+        Assert.Equal(502, sut.PC);
     }
 
     [Fact(DisplayName = "5xy0 - SE Vx, Vy - Skip next instruction if Vx = Vy. When Vx = Vy.")]
@@ -171,7 +171,7 @@ public class Chip8Should
 
         sut.Process(instruction);
 
-        Assert.Equal(502, sut.PC);
+        Assert.Equal(504, sut.PC);
     }
 
     [Fact(DisplayName = "5xy0 - SE Vx, Vy - Skip next instruction if Vx = Vy. When Vx != Vy.")]
@@ -192,7 +192,7 @@ public class Chip8Should
 
         sut.Process(instruction);
 
-        Assert.Equal(500, sut.PC);
+        Assert.Equal(502, sut.PC);
     }
 
     [Fact(DisplayName = "6xkk - LD Vx, byte - Set Vx = kk.")]
@@ -256,6 +256,8 @@ public class Chip8Should
         Assert.Equal(4, sut.V[13]);
         Assert.Equal(5, sut.V[14]);
         Assert.Equal(6, sut.V[15]);
+        
+        Assert.Equal(532, sut.PC);
     }
 
     [Fact(DisplayName = "7xkk - ADD Vx, byte - Set Vx = Vx + kk.")]
@@ -284,6 +286,8 @@ public class Chip8Should
         Assert.Equal(15, sut.V[0]);
         Assert.Equal(21, sut.V[10]);
         Assert.Equal(33, sut.V[15]);
+        
+        Assert.Equal(506, sut.PC);
     }
 
     [Fact(DisplayName = "8xy0 - LD Vx, Vy - Set Vx = Vy.")]
@@ -322,6 +326,8 @@ public class Chip8Should
         Assert.Equal(0, sut.V[13]);
         Assert.Equal(0, sut.V[14]);
         Assert.Equal(100, sut.V[15]);
+        
+        Assert.Equal(504, sut.PC);
     }
 
     [Fact(DisplayName = "8xy1 - OR Vx, Vy - Set Vx = Vx OR Vy.")]
@@ -358,6 +364,8 @@ public class Chip8Should
         Assert.Equal(0, sut.V[13]);
         Assert.Equal(0, sut.V[14]);
         Assert.Equal(0, sut.V[15]);
+        
+        Assert.Equal(502, sut.PC);
     }
 
     [Fact(DisplayName = "8xy2 - AND Vx, Vy - Set Vx = Vx AND Vy.")]
@@ -394,6 +402,8 @@ public class Chip8Should
         Assert.Equal(40, sut.V[13]);
         Assert.Equal(0, sut.V[14]);
         Assert.Equal(0, sut.V[15]);
+        
+        Assert.Equal(502, sut.PC);
     }
 
     [Fact(DisplayName = "8xy3 - XOR Vx, Vy - Set Vx = Vx XOR Vy.")]
@@ -430,6 +440,8 @@ public class Chip8Should
         Assert.Equal(0, sut.V[13]);
         Assert.Equal(0, sut.V[14]);
         Assert.Equal(0, sut.V[15]);
+        
+        Assert.Equal(502, sut.PC);
     }
 
     [Fact(DisplayName = "8xy4 - ADD Vx, Vy - Set Vx = Vx + Vy, set VF = carry. With carry.")]
@@ -467,6 +479,8 @@ public class Chip8Should
         Assert.Equal(0, sut.V[13]);
         Assert.Equal(0, sut.V[14]);
         Assert.Equal(1, sut.V[15]);
+        
+        Assert.Equal(502, sut.PC);
     }
 
     [Fact(DisplayName = "8xy4 - ADD Vx, Vy - Set Vx = Vx + Vy, set VF = carry. Without carry.")]
@@ -504,6 +518,8 @@ public class Chip8Should
         Assert.Equal(0, sut.V[13]);
         Assert.Equal(0, sut.V[14]);
         Assert.Equal(0, sut.V[15]);
+        
+        Assert.Equal(502, sut.PC);
     }
 
     [Fact(DisplayName = "8xy5 - SUB Vx, Vy - Set Vx = Vx - Vy, set VF = NOT borrow. With not borrow.")]
@@ -541,6 +557,8 @@ public class Chip8Should
         Assert.Equal(0, sut.V[13]);
         Assert.Equal(0, sut.V[14]);
         Assert.Equal(1, sut.V[15]);
+        
+        Assert.Equal(502, sut.PC);
     }
 
     [Fact(DisplayName = "8xy5 - SUB Vx, Vy - Set Vx = Vx - Vy, set VF = NOT borrow. Without not borrow.")]
@@ -578,6 +596,8 @@ public class Chip8Should
         Assert.Equal(0, sut.V[13]);
         Assert.Equal(0, sut.V[14]);
         Assert.Equal(0, sut.V[15]);
+        
+        Assert.Equal(502, sut.PC);
     }
     
     [Fact(DisplayName = "8xy6 - SHR Vx {, Vy} - Set Vx = Vx SHR 1. When LSB of Vx is 1.")]
@@ -614,6 +634,8 @@ public class Chip8Should
         Assert.Equal(0, sut.V[13]);
         Assert.Equal(0, sut.V[14]);
         Assert.Equal(1, sut.V[15]);
+        
+        Assert.Equal(502, sut.PC);
     }
     
     [Fact(DisplayName = "8xy6 - SHR Vx {, Vy} - Set Vx = Vx SHR 1. When LSB of Vx is 0.")]
@@ -650,6 +672,8 @@ public class Chip8Should
         Assert.Equal(0, sut.V[13]);
         Assert.Equal(0, sut.V[14]);
         Assert.Equal(0, sut.V[15]);
+        
+        Assert.Equal(502, sut.PC);
     }
     
     [Fact(DisplayName = "8xy7 - SUBN Vx, Vy - Set Vx = Vy - Vx, set VF = NOT borrow. With NOT borrow.")]
@@ -687,6 +711,8 @@ public class Chip8Should
         Assert.Equal(0, sut.V[13]);
         Assert.Equal(0, sut.V[14]);
         Assert.Equal(1, sut.V[15]);
+        
+        Assert.Equal(502, sut.PC);
     }
     
     [Fact(DisplayName = "8xy7 - SUBN Vx, Vy - Set Vx = Vy - Vx, set VF = NOT borrow. Without NOT borrow.")]
@@ -724,6 +750,8 @@ public class Chip8Should
         Assert.Equal(0, sut.V[13]);
         Assert.Equal(0, sut.V[14]);
         Assert.Equal(0, sut.V[15]);
+        
+        Assert.Equal(502, sut.PC);
     }
     
     [Fact(DisplayName = "8xyE - SHL Vx {, Vy} - Set Vx = Vx SHL 1. When MSB of Vx is 1")]
@@ -760,6 +788,8 @@ public class Chip8Should
         Assert.Equal(0, sut.V[13]);
         Assert.Equal(0, sut.V[14]);
         Assert.Equal(1, sut.V[15]);
+        
+        Assert.Equal(502, sut.PC);
     }
     
     [Fact(DisplayName = "8xyE - SHL Vx {, Vy} - Set Vx = Vx SHL 1. When MSB of Vx is 1")]
@@ -796,6 +826,8 @@ public class Chip8Should
         Assert.Equal(0, sut.V[13]);
         Assert.Equal(0, sut.V[14]);
         Assert.Equal(0, sut.V[15]);
+        
+        Assert.Equal(502, sut.PC);
     }
     
     [Fact(DisplayName = "9xy0 - SNE Vx, Vy - Skip next instruction if Vx != Vy. When Vx != Vy.")]
@@ -816,7 +848,7 @@ public class Chip8Should
 
         sut.Process(instruction);
         
-        Assert.Equal(502, sut.PC);
+        Assert.Equal(504, sut.PC);
     }
     
     [Fact(DisplayName = "9xy0 - SNE Vx, Vy - Skip next instruction if Vx != Vy. When Vx = Vy.")]
@@ -837,7 +869,7 @@ public class Chip8Should
 
         sut.Process(instruction);
         
-        Assert.Equal(500, sut.PC);
+        Assert.Equal(502, sut.PC);
     }
 
     [Fact(DisplayName = "Annn - LD I, addr - Set I = nnn.")]
@@ -854,6 +886,7 @@ public class Chip8Should
         sut.Process(instruction);
 
         Assert.Equal(692, sut.I);
+        Assert.Equal(502, sut.PC);
     }
 
     [Fact(DisplayName = "Bnnn - JP V0, addr - Jump to location nnn + V0.")]
@@ -911,6 +944,8 @@ public class Chip8Should
         Assert.Equal(0, sut.V[13]);
         Assert.Equal(0, sut.V[14]);
         Assert.Equal(0, sut.V[15]);
+        
+        Assert.Equal(502, sut.PC);
     }
     
     [Fact(DisplayName = "Fx1E - ADD I, Vx - Set I = I + Vx.")]
@@ -933,9 +968,10 @@ public class Chip8Should
         sut.Process(addVxToIAndStoreInI);
        
         Assert.Equal(702, sut.I);
+        Assert.Equal(504, sut.PC);
     }
     
-    [Theory(DisplayName = "Fx28 - LD F, Vx - Set I = location of sprite for digit Vx.")]
+    [Theory(DisplayName = "Fx29 - LD F, Vx - Set I = location of sprite for digit Vx.")]
     [InlineData("0", 0)]
     [InlineData("1", 5)]
     [InlineData("2", 10)]
@@ -965,6 +1001,7 @@ public class Chip8Should
         sut.Process(setIToAddressOfDigitSprite0);
        
         Assert.Equal(expectedMemoryLocation, sut.I);
+        Assert.Equal(502, sut.PC);
     }
     
     [Fact(DisplayName = "Fx33 - LD B, Vx - Store BCD representation of Vx in memory locations I, I+1, and I+2.")]
@@ -989,6 +1026,8 @@ public class Chip8Should
         Assert.Equal(2, sut.Memory[692]);
         Assert.Equal(5, sut.Memory[693]);
         Assert.Equal(5, sut.Memory[694]);
+        
+        Assert.Equal(504, sut.PC);
     }
     
     [Fact(DisplayName = "Fx55 - LD [I], Vx - Store registers V0 through Vx in memory starting at location I.")]
@@ -1015,6 +1054,8 @@ public class Chip8Should
         Assert.Equal(10, sut.Memory[692]);
         Assert.Equal(20, sut.Memory[693]);
         Assert.Equal(30, sut.Memory[694]);
+        
+        Assert.Equal(504, sut.PC);
     }
     
     [Fact(DisplayName = "Fx65 - LD Vx, [I] - Read registers V0 through Vx from memory starting at location I.")]
@@ -1057,6 +1098,8 @@ public class Chip8Should
         Assert.Equal(0, sut.V[13]);
         Assert.Equal(0, sut.V[14]);
         Assert.Equal(0, sut.V[15]);
+        
+        Assert.Equal(506, sut.PC);
     }
     
     [Fact(DisplayName = "Dxyn - DRW Vx, Vy, nibble - Display n-byte sprite starting at memory location I at (Vx, Vy), set VF = collision.")]
@@ -1123,6 +1166,8 @@ public class Chip8Should
 ";
         
         Assert.Equal(expectedDisplay, sut.Display());
+        
+        Assert.Equal(506, sut.PC);
     }
     
     [Fact(DisplayName = "00E0 - CLS - Clear the display.")]
@@ -1227,5 +1272,7 @@ public class Chip8Should
 0000000000000000000000000000000000000000000000000000000000000000
 ";
         Assert.Equal(expectedEmptyDisplay, sut.Display());
+        
+        Assert.Equal(508, sut.PC);
     }
 }
