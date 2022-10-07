@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Text.RegularExpressions;
 using Chip8Emulator.Tests.Extensions;
 using Xunit;
@@ -12,6 +13,59 @@ public class MemoryLoggingShould
     public MemoryLoggingShould(ITestOutputHelper testOutputHelper)
     {
         _testOutputHelper = testOutputHelper;
+    }
+
+    [Fact]
+    public void render_display()
+    {
+        var display = new int[32, 64];
+        
+        for(var row = 0; row < display.GetLength(0); row++)  { 
+            for(var column = 0; column < display.GetLength(1); column++)  { 
+                display[row, column] = 0;
+            }
+        }
+        
+        // _testOutputHelper.WriteLine(display.Cast<int>().Sum().ToString());
+        
+        for(var row = 0; row < display.GetLength(0); row++)
+        {
+            var rowCells = "";
+            
+            for(var column = 0; column < display.GetLength(1); column++)
+            {
+                rowCells += display[row, column];
+            }
+            
+            _testOutputHelper.WriteLine(rowCells);
+        }
+    }
+
+    [Fact]
+    public void compare_bits_in_byte()
+    {
+        const byte fourteen = 14;
+        const byte eleven = 11;
+
+        var screenSprite = new BitArray(new[] { fourteen });
+        var spriteToDraw = new BitArray(new[] { eleven });
+
+        _testOutputHelper.WriteLine($"14: {fourteen.ToBinaryString()}");
+        _testOutputHelper.WriteLine($"11: {eleven.ToBinaryString()}");
+
+        var xorResult = new List<int>();
+        var flippedBits = new List<char>();
+
+        for (var i = 7; i >= 0; i--)
+        {
+            xorResult.Add(Convert.ToInt32(screenSprite[i] ^ spriteToDraw[i]));
+
+            if (screenSprite[i] && spriteToDraw[i]) flippedBits.Add('✓');
+            if (!(screenSprite[i] && spriteToDraw[i])) flippedBits.Add('x');
+        }
+
+        _testOutputHelper.WriteLine($"XR: {string.Join("", xorResult)}");
+        _testOutputHelper.WriteLine($"GS: {string.Join("", flippedBits)}");
     }
 
     [Fact]

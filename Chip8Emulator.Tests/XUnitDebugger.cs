@@ -15,4 +15,9 @@ public class XUnitDebugger : IDebugger
     {
         _testOutputHelper.WriteLine(message);
     }
+
+    public void LogState(Chip8 chip8)
+    {
+        _testOutputHelper.WriteLine(string.Empty);
+    }
 }
