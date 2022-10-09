@@ -249,7 +249,7 @@ public class Debugger : IDebugger
             var (x, y) = instruction.MiddleTwoNibbles();
             var xHex = x.Hex();
 
-            _messages.Add($"[NOOP] - {instructionHex} - SKNP V{xHex} - Skip next instruction if key with the value of V{xHex} is not pressed.");
+            _messages.Add($"{instructionHex} - SKNP V{xHex} - Skip next instruction if key with the value of V{xHex} is not pressed.");
             return;
         }
         
@@ -258,7 +258,7 @@ public class Debugger : IDebugger
             var (x, y) = instruction.MiddleTwoNibbles();
             var xHex = x.Hex();
 
-            _messages.Add($"[NOOP] - {instructionHex} - LD V{xHex}, DT - Set V{xHex} = delay timer value.");
+            _messages.Add($"{instructionHex} - LD V{xHex}, DT - Set V{xHex} = delay timer value.");
             return;
         }
         

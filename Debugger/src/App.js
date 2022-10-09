@@ -139,6 +139,14 @@ const App = () => {
     setIsExecuting(false);
   };
 
+  const pressKey = async (key) => {
+    await axios.post(`https://localhost:7222/Chip8/key?key=${key}&pressed=true`)
+  }
+
+  const releaseKey = async (key) => {
+    await axios.post(`https://localhost:7222/Chip8/key?key=${key}&pressed=false`)
+  }
+
   return (
     <div className="container">
       <h1>Debugger</h1>
@@ -147,10 +155,6 @@ const App = () => {
         accept=".ch8"
         onChange={(e) => loadRom(e.target.files[0])}
       />
-      <button
-        onMouseDown={() => console.log('mouse down')}
-        onMouseUp={() => console.log('mouse up')}
-      >Test</button>
       <button onClick={startExecution} disabled={isExecuting}>
         Start
       </button>
@@ -170,6 +174,18 @@ const App = () => {
         value={executionSpeed}
         onChange={(e) => setExecutionSpeed(e.target.value)}
       />
+      <div>
+        <h2>Keypad</h2>
+        <div className="keypad">
+        {['1', '2', '3', 'C', '4', '5', '6', 'D', '7', '8', '9', 'E', 'A', '0', 'B', 'F']
+          .map(key => {
+            return <button key={key} className="keypad__key"
+              onMouseDown={() => pressKey(key)}
+              onMouseUp={() => releaseKey(key)}
+            >{key}</button>
+          })}
+        </div>
+      </div>
       <div className="columns">
         <div className="column">
           <h2>Registers</h2>

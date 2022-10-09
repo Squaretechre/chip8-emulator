@@ -39,4 +39,19 @@ public class Chip8Controller : ControllerBase
         
         return Results.Ok();
     }
+    
+    [HttpPost("key", Name = "KeyPress")]
+    public IResult PressKey(string key, bool pressed)
+    {
+        if (pressed)
+        {
+            _chip8.PressKey(key);
+        }
+        else
+        {
+            _chip8.ReleaseKey(key);
+        }
+        
+        return Results.Ok();
+    }
 }

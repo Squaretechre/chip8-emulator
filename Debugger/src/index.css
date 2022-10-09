@@ -79,3 +79,16 @@ table tr:nth-child(odd){
 .instruction--no-op {
   background-color: #e17055;
 }
+
+.keypad {
+  width: 160px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  grid-column-gap: 8px;
+  grid-row-gap: 8px;
+}
+
+.keypad__key {
+  padding: 8px;
+}

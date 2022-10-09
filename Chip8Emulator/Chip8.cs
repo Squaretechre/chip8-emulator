@@ -49,6 +49,9 @@ public class Chip8
         {"F", false}, 
     };
 
+    private bool _waitingForKeyPress;
+    private int _waitingKeyRegister;
+
     public Chip8(
         int[] v, 
         int pc, 
@@ -101,6 +104,8 @@ public class Chip8
 
     public void Process(short instruction)
     {
+        if (_waitingForKeyPress) return;
+        
         _debugger.LogInstruction(instruction);
         
         if (instruction.Matches("00E0"))
@@ -307,6 +312,25 @@ public class Chip8
             if (Keys[V[x].Hex()] == false) PC += 2;
         }
         
+        if (instruction.Matches("F.07"))
+        {
+            var (upperByte, _) = instruction.UpperAndLowerBytes();
+
+            var x = upperByte.LowerNibble();
+
+            V[x] = DT;
+        }
+        
+        if (instruction.Matches("F.0A"))
+        {
+            var (upperByte, _) = instruction.UpperAndLowerBytes();
+
+            var x = upperByte.LowerNibble();
+
+            _waitingForKeyPress = true;
+            _waitingKeyRegister = x;
+        }
+        
         if (instruction.Matches("F.15"))
         {
             var (upperByte, _) = instruction.UpperAndLowerBytes();
@@ -392,6 +416,12 @@ public class Chip8
 
     public void PressKey(string key)
     {
+        if (_waitingForKeyPress)
+        {
+            V[_waitingKeyRegister] = Convert.ToInt32(key, 16);
+            _waitingForKeyPress = false;
+        }
+        
         Keys[key] = true;
     }
 

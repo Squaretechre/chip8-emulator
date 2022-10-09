@@ -278,8 +278,8 @@ public class Chip8Should
     [InlineData("0xC13B", "C13B - RND V1, byte - Set V1 = random byte AND 59.")]
     [InlineData("0xD426", "D426 - DRW V4, V2, nibble - Display 6-byte sprite starting at memory location I at (V4, V2), set VF = collision.")]
     [InlineData("0xEA9E", "EA9E - SKP VA - Skip next instruction if key with the value of VA is pressed.")]
-    [InlineData("0xEBA1", "[NOOP] - EBA1 - SKNP VB - Skip next instruction if key with the value of VB is not pressed.")]
-    [InlineData("0xFC07", "[NOOP] - FC07 - LD VC, DT - Set VC = delay timer value.")]
+    [InlineData("0xEBA1", "EBA1 - SKNP VB - Skip next instruction if key with the value of VB is not pressed.")]
+    [InlineData("0xFC07", "FC07 - LD VC, DT - Set VC = delay timer value.")]
     [InlineData("0xF10A", "[NOOP] - F10A - LD V1, K - Wait for a key press, store the value of the key in V1.")]
     [InlineData("0xF215", "F215 - LD DT, V2 - Set delay timer = V2.")]
     [InlineData("0xF318", "[NOOP] - F318 - LD ST, V3 - Set sound timer = V3.")]
@@ -301,7 +301,10 @@ public class Chip8Should
             _dummyThread);
         
         registers[10] = 2;
+        registers[11] = 3;
+        
         sut.PressKey("2");
+        sut.PressKey("3");
 
         var callSubroutineInstruction = Convert.ToInt16("0x2326", 16);
         
@@ -1368,6 +1371,95 @@ public class Chip8Should
         sut.Process(skipNextInstructionIfVxIsPressed);
 
         Assert.Equal(514, sut.PC);
+    }
+    
+    [Fact(DisplayName = "Fx07 - LD Vx, DT - Set Vx = delay timer value.")]
+    public void process_instruction_fx07()
+    {
+        var registers = new int[16];
+
+        registers[1] = 10;
+
+        var setVxToTheValueOfDt = Convert.ToInt16("0xF107", 16);
+
+        var mockThread = A.Fake<IThread>();
+
+        var sut = new Chip8(
+            registers,
+            InitialProgramCounter,
+            _stubbedRandomNumber,
+            _debugger,
+            mockThread);
+
+        sut.Process(setVxToTheValueOfDt);
+        
+        Assert.Equal(0, sut.DT);
+        Assert.Equal(0, sut.V[1]);
+        Assert.Equal(514, sut.PC);
+    }
+    
+    [Fact(DisplayName = "Fx0A - LD Vx, K - Wait for a key press, store the value of the key in Vx. When execution is stopped.")]
+    public void execution_stops_while_waiting_for_keypress_when_processing_instruction_fx0a()
+    {
+        var registers = new int[16];
+
+        registers[1] = 0;
+
+        var waitForKeyPress = Convert.ToInt16("0xF10A", 16);
+        var instructionForRegister2 = Convert.ToInt16("0x6201", 16);
+        var instructionForRegister3 = Convert.ToInt16("0x6302", 16);
+        var instructionForRegister4 = Convert.ToInt16("0x6403", 16);
+
+        var sut = new Chip8(
+            registers,
+            InitialProgramCounter,
+            _stubbedRandomNumber,
+            _debugger,
+            _dummyThread);
+
+        sut.Process(waitForKeyPress);
+        sut.Process(instructionForRegister2);
+        sut.Process(instructionForRegister3);
+        sut.Process(instructionForRegister4);
+
+        Assert.Equal(0, sut.V[2]);
+        Assert.Equal(0, sut.V[3]);
+        Assert.Equal(0, sut.V[4]);
+        Assert.Equal(514, sut.PC);
+    }
+    
+    [Fact(DisplayName = "Fx0A - LD Vx, K - Wait for a key press, store the value of the key in Vx. When execution is stopped.")]
+    public void resume_execution_when_key_is_pressed_after_processing_instruction_fx0a()
+    {
+        var registers = new int[16];
+
+        registers[1] = 0;
+
+        var waitForKeyPress = Convert.ToInt16("0xF10A", 16);
+        var instructionForRegister2 = Convert.ToInt16("0x6201", 16);
+        var instructionForRegister3 = Convert.ToInt16("0x6302", 16);
+        var instructionForRegister4 = Convert.ToInt16("0x6403", 16);
+
+        var sut = new Chip8(
+            registers,
+            InitialProgramCounter,
+            _stubbedRandomNumber,
+            _debugger,
+            _dummyThread);
+
+        sut.Process(waitForKeyPress);
+        
+        sut.PressKey("A");
+        
+        sut.Process(instructionForRegister2);
+        sut.Process(instructionForRegister3);
+        sut.Process(instructionForRegister4);
+
+        Assert.Equal(10, sut.V[1]);
+        Assert.Equal(1, sut.V[2]);
+        Assert.Equal(2, sut.V[3]);
+        Assert.Equal(3, sut.V[4]);
+        Assert.Equal(520, sut.PC);
     }
 
     [Fact(DisplayName = "Fx15 - LD DT, Vx - Set delay timer = Vx.")]
