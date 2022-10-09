@@ -153,6 +153,8 @@ public class Chip8Should
         sut.Load(new Rom(romBytes));
 
         var expectedMemory = new byte[4096];
+        
+        new DigitSprites().CopyTo(expectedMemory);
         romBytes.CopyTo(expectedMemory, InitialProgramCounter);
 
         Assert.Equal(0, sut.I);

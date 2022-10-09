@@ -68,6 +68,7 @@ const App = () => {
   const [chip8State, setChip8State] = useState(initialChip8State);
   const [isExecuting, setIsExecuting] = useState(false);
   const [executionSpeed, setExecutionSpeed] = useState(10);
+  const [loadedRom, setLoadedRom] = useState()
 
   useEffect(() => {
     let interval = {};
@@ -83,7 +84,9 @@ const App = () => {
     return () => clearInterval(interval);
   }, [isExecuting, executionSpeed]);
 
-  const uploadFile = async (file) => {
+  const loadRom = async (file) => {
+    setLoadedRom(file)
+
     const formData = new FormData();
 
     formData.append("rom", file);
@@ -103,10 +106,14 @@ const App = () => {
       return;
     }
 
-    setChip8State(initialChip8State);
     setIsExecuting(false);
+    setChip8State(initialChip8State);
     await getChip8State();
   };
+
+  const reset = async () => {
+    await loadRom(loadedRom)
+  }
 
   const getChip8State = async () => {
     const { data } = await axios.get("https://localhost:7222/Chip8");
@@ -138,7 +145,7 @@ const App = () => {
       <input
         type="file"
         accept=".ch8"
-        onChange={(e) => uploadFile(e.target.files[0])}
+        onChange={(e) => loadRom(e.target.files[0])}
       />
       <button onClick={startExecution} disabled={isExecuting}>
         Start
@@ -148,6 +155,9 @@ const App = () => {
       </button>
       <button onClick={step} disabled={isExecuting}>
         Step
+      </button>
+      <button onClick={reset}>
+        Reset
       </button>
       <label htmlFor="execution-speed">Execution speed:</label>
       <input

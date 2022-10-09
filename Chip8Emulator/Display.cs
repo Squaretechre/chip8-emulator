@@ -25,30 +25,37 @@ public class Display
 
     public void DrawSpriteAt(int x, int y, IEnumerable<byte> spriteBytes)
     {
-        _pixelErased = false;
-        
-        var spriteRows = spriteBytes
-            .Select(@byte => new BitArray(new[] { @byte }))
-            .ToList();
-        
-        var row = y;
-
-        foreach (var spriteRow in spriteRows)
+        try
         {
-            var pixel = x;
-            
-            for (var bit = 7; bit >= 0; bit--)
+            _pixelErased = false;
+        
+            var spriteRows = spriteBytes
+                .Select(@byte => new BitArray(new[] { @byte }))
+                .ToList();
+        
+            var row = y;
+
+            foreach (var spriteRow in spriteRows)
             {
-                var currentPixel = _display[row, pixel];
-                var newPixel = Convert.ToInt32(currentPixel ^ Convert.ToInt32(spriteRow[bit]));
+                var pixel = x;
+            
+                for (var bit = 7; bit >= 0; bit--)
+                {
+                    var currentPixel = _display[row, pixel];
+                    var newPixel = Convert.ToInt32(currentPixel ^ Convert.ToInt32(spriteRow[bit]));
                 
-                if (currentPixel == 1 && newPixel == 0) _pixelErased = true;
+                    if (currentPixel == 1 && newPixel == 0) _pixelErased = true;
 
-                _display[row, pixel] = newPixel;
-                pixel += 1;
+                    _display[row, pixel] = newPixel;
+                    pixel += 1;
+                }
+
+                row += 1;
             }
-
-            row += 1;
+        }
+        catch (Exception exception)
+        {
+            var message = exception.Message;
         }
     }
 

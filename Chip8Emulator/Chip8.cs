@@ -44,6 +44,7 @@ public class Chip8
         Memory = new byte[4096];
         _display.Clear();
         _debugger.Clear();
+        _digitSprites.CopyTo(Memory);
 
         rom.CopyTo(Memory, 512);
     }
@@ -71,7 +72,6 @@ public class Chip8
         if (instruction.Matches("00EE"))
         {
             PC = Stack.Pop();
-            // return;
         }
 
         if (instruction.Matches("1..."))
@@ -245,8 +245,8 @@ public class Chip8
             for (var i = 0; i < n; i++)
             {
                 sprite[i] = Memory[I + i];
-            } 
-            
+            }
+
             _display.DrawSpriteAt(V[x], V[y], sprite);
         }
         
