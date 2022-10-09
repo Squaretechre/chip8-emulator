@@ -105,7 +105,6 @@ const App = () => {
 
     setChip8State(initialChip8State);
     setIsExecuting(false);
-    console.log("whut");
     await getChip8State();
   };
 

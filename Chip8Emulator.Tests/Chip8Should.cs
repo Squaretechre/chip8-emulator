@@ -239,7 +239,7 @@ public class Chip8Should
 
         sut.Process(returnFromSubroutineInstruction);
 
-        Assert.Equal(InitialProgramCounter, sut.PC);
+        Assert.Equal(514, sut.PC);
         Assert.False(sut.Stack.Any());
     }
 

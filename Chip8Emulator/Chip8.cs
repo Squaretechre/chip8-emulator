@@ -71,7 +71,7 @@ public class Chip8
         if (instruction.Matches("00EE"))
         {
             PC = Stack.Pop();
-            return;
+            // return;
         }
 
         if (instruction.Matches("1..."))
