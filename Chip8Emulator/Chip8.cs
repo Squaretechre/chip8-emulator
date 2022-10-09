@@ -11,11 +11,11 @@ public class Chip8
     private readonly DigitSprites _digitSprites;
     
     public int I { get; private set; }
-    public int[] V { get; }
+    public int[] V { get; private set; }
     public int PC { get; private set; }
     
-    public Stack<int> Stack { get; }
-    public byte[] Memory { get; }
+    public Stack<int> Stack { get; private set; }
+    public byte[] Memory { get; private set; }
 
     public byte DelayTimer;
     public byte SoundTimer;
@@ -34,14 +34,35 @@ public class Chip8
         _digitSprites = new DigitSprites();
         _digitSprites.CopyTo(Memory);
     }
+    
+    public void Load(Rom rom)
+    {
+        V = new int[16];
+        PC = 512;
+        I = 0;
+        Stack = new Stack<int>();
+        Memory = new byte[4096];
+        _display.Clear();
+        _debugger.Clear();
+
+        rom.CopyTo(Memory, 512);
+    }
 
     public string Display()
     {
         return _display.ToString();
     }
+    
+    public void Step()
+    {
+        var instruction = BitConverter.ToInt16(new[] { Memory[PC + 1], Memory[PC] });
+        Process(instruction);
+    }
 
     public void Process(short instruction)
     {
+        _debugger.LogInstruction(instruction);
+        
         if (instruction.Matches("00E0"))
         {
             _display.Clear();
@@ -55,14 +76,14 @@ public class Chip8
 
         if (instruction.Matches("1..."))
         {
-            PC = instruction.Lower12Bits();
+            PC =  instruction.Lower12Bits();
             return;
         }
 
         if (instruction.Matches("2..."))
         {
             Stack.Push(PC);
-            PC = instruction.Lower12Bits();
+            PC =  instruction.Lower12Bits();
             return;
         }
 
@@ -198,7 +219,7 @@ public class Chip8
 
         if (instruction.Matches("B..."))
         {
-            PC = instruction.Lower12Bits() + V[0];
+            PC =  instruction.Lower12Bits() + V[0];
             return;
         }
         
@@ -226,7 +247,7 @@ public class Chip8
                 sprite[i] = Memory[I + i];
             } 
             
-            _display.DrawSpriteAt(x, y, sprite);
+            _display.DrawSpriteAt(V[x], V[y], sprite);
         }
         
         if (instruction.Matches("F.1E"))

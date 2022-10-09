@@ -16,32 +16,6 @@ public class MemoryLoggingShould
     }
 
     [Fact]
-    public void render_display()
-    {
-        var display = new int[32, 64];
-        
-        for(var row = 0; row < display.GetLength(0); row++)  { 
-            for(var column = 0; column < display.GetLength(1); column++)  { 
-                display[row, column] = 0;
-            }
-        }
-        
-        // _testOutputHelper.WriteLine(display.Cast<int>().Sum().ToString());
-        
-        for(var row = 0; row < display.GetLength(0); row++)
-        {
-            var rowCells = "";
-            
-            for(var column = 0; column < display.GetLength(1); column++)
-            {
-                rowCells += display[row, column];
-            }
-            
-            _testOutputHelper.WriteLine(rowCells);
-        }
-    }
-
-    [Fact]
     public void compare_bits_in_byte()
     {
         const byte fourteen = 14;

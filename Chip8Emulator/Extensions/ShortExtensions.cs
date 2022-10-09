@@ -18,21 +18,19 @@ public static class ShortExtensions
         return new Tuple<int, int>(upperByte.LowerNibble(), lowerByte.UpperNibble());
     }
 
-    public static int Lower12Bits(this short @short) => @short & 0xFFF;
+    public static int Lower12Bits(this short @short) => @short & 0x0FFF;
+    // public static int Lower12Bits(this short @short) => @short & 0xFF;
     
-    public static bool Matches(this short @short, string pattern) {
-        return Regex.IsMatch(HexStringFor(@short), pattern); 
-    }
-    
-    private static string HexStringFor(short instruction)
+    public static bool Matches(this short @short, string pattern) 
+        => Regex.IsMatch(@short.ToHexString(), pattern);
+
+    public static string ToHexString(this short instruction)
     {
         var instructionBytesFromShort = BitConverter
             .GetBytes(instruction)
             .Reverse()
             .ToArray();
 
-        return BitConverter
-            .ToString(instructionBytesFromShort, 0, 2)
-            .Replace("-", "");
+        return instructionBytesFromShort.ToHex();
     }
 }

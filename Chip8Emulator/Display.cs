@@ -27,20 +27,20 @@ public class Display
     {
         _pixelErased = false;
         
-        var spriteBits = spriteBytes
+        var spriteRows = spriteBytes
             .Select(@byte => new BitArray(new[] { @byte }))
             .ToList();
         
         var row = y;
 
-        foreach (var rowOfSprite in spriteBits)
+        foreach (var spriteRow in spriteRows)
         {
             var pixel = x;
             
             for (var bit = 7; bit >= 0; bit--)
             {
                 var currentPixel = _display[row, pixel];
-                var newPixel = Convert.ToInt32(currentPixel ^ Convert.ToInt32(rowOfSprite[bit]));
+                var newPixel = Convert.ToInt32(currentPixel ^ Convert.ToInt32(spriteRow[bit]));
                 
                 if (currentPixel == 1 && newPixel == 0) _pixelErased = true;
 
