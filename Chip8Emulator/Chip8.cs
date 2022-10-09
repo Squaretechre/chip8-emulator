@@ -4,9 +4,18 @@ namespace Chip8Emulator;
 
 public class Chip8
 {
+    public class Thread : IThread
+    {
+        public void Sleep(int milliseconds)
+        {
+            System.Threading.Thread.Sleep(milliseconds);
+        }
+    }
+
     private const int F = 15;
 
     private readonly IDebugger _debugger;
+    private readonly IThread _thread;
     private readonly Func<int> _randomNumber;
     private readonly DigitSprites _digitSprites;
     
@@ -17,11 +26,16 @@ public class Chip8
     public Stack<int> Stack { get; private set; }
     public byte[] Memory { get; private set; }
 
-    public byte DelayTimer;
-    public byte SoundTimer;
+    public int DT;
+    public int ST;
     private readonly Display _display;
 
-    public Chip8(int[] v, int pc, Func<int> randomNumber, IDebugger debugger)
+    public Chip8(
+        int[] v, 
+        int pc, 
+        Func<int> randomNumber, 
+        IDebugger debugger,
+        IThread thread)
     {
         V = v;
         PC = pc;
@@ -30,6 +44,7 @@ public class Chip8
         
         _randomNumber = randomNumber;
         _debugger = debugger;
+        _thread = thread;
         _display = new Display();
         _digitSprites = new DigitSprites();
         _digitSprites.CopyTo(Memory);
@@ -248,6 +263,23 @@ public class Chip8
             }
 
             _display.DrawSpriteAt(V[x], V[y], sprite);
+        }
+        
+        if (instruction.Matches("F.15"))
+        {
+            var (upperByte, _) = instruction.UpperAndLowerBytes();
+
+            var x = upperByte.LowerNibble();
+
+            DT = V[x];
+
+            if (DT == 0) return;
+
+            do
+            {
+                DT -= 1;
+                _thread.Sleep(16);
+            } while (DT > 0);
         }
         
         if (instruction.Matches("F.1E"))

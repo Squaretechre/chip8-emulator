@@ -25,7 +25,8 @@ builder.Services.AddSingleton(s => new Chip8(
     new int[16],
     512,
     () => new Random().Next(0, 100),
-    s.GetService<IDebugger>() ?? new Debugger()));
+    s.GetService<IDebugger>() ?? new Debugger(),
+    new Chip8.Thread()));
 
 var app = builder.Build();
 

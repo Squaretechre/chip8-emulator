@@ -276,7 +276,7 @@ public class Debugger : IDebugger
             var (x, y) = instruction.MiddleTwoNibbles();
             var xHex = x.Hex();
 
-            _messages.Add($"[NOOP] - {instructionHex} - LD DT, V{xHex} - Set delay timer = V{xHex}.");
+            _messages.Add($"{instructionHex} - LD DT, V{xHex} - Set delay timer = V{xHex}.");
             return;
         }
         
