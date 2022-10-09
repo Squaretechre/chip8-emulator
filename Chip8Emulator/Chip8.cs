@@ -265,7 +265,7 @@ public class Chip8
 
             var x = upperByte.LowerNibble();
 
-            I = _digitSprites.MemoryLocationFor(x);
+            I = _digitSprites.MemoryLocationFor(V[x]);
         }
         
         if (instruction.Matches("F.33"))

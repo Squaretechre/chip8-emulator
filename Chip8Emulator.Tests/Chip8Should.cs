@@ -1177,33 +1177,37 @@ public class Chip8Should
     }
 
     [Theory(DisplayName = "Fx29 - LD F, Vx - Set I = location of sprite for digit Vx.")]
-    [InlineData("0", 0)]
-    [InlineData("1", 5)]
-    [InlineData("2", 10)]
-    [InlineData("3", 15)]
-    [InlineData("4", 20)]
-    [InlineData("5", 25)]
-    [InlineData("6", 30)]
-    [InlineData("7", 35)]
-    [InlineData("8", 40)]
-    [InlineData("9", 45)]
-    [InlineData("A", 50)]
-    [InlineData("B", 55)]
-    [InlineData("C", 60)]
-    [InlineData("D", 65)]
-    [InlineData("E", 70)]
-    [InlineData("F", 75)]
-    public void process_instruction_fx29(string digitSpriteX, int expectedMemoryLocation)
+    [InlineData(0, "0", 0)]
+    [InlineData(1, "1", 5)]
+    [InlineData(2, "2", 10)]
+    [InlineData(3, "3", 15)]
+    [InlineData(4, "4", 20)]
+    [InlineData(5, "5", 25)]
+    [InlineData(6, "6", 30)]
+    [InlineData(7, "7", 35)]
+    [InlineData(8, "8", 40)]
+    [InlineData(9, "9", 45)]
+    [InlineData(10, "A", 50)]
+    [InlineData(11, "B", 55)]
+    [InlineData(12, "C", 60)]
+    [InlineData(13, "D", 65)]
+    [InlineData(14, "E", 70)]
+    [InlineData(15, "F", 75)]
+    public void process_instruction_fx29(int register, string digitToDisplay, int expectedMemoryLocation)
     {
+        var registers = new int[16];
+
+        registers[register] = Convert.ToInt32(digitToDisplay, 16);
+        
         var sut = new Chip8(
-            _emptyRegisters,
+            registers,
             InitialProgramCounter,
             _stubbedRandomNumber,
             _debugger);
 
-        var setIToAddressOfDigitSprite0 = Convert.ToInt16($"0xF{digitSpriteX}29", 16);
+        var setIToAddressOfDigitSpriteOfRegisterX = Convert.ToInt16($"0xF{register:X}29", 16);
 
-        sut.Process(setIToAddressOfDigitSprite0);
+        sut.Process(setIToAddressOfDigitSpriteOfRegisterX);
 
         Assert.Equal(expectedMemoryLocation, sut.I);
         Assert.Equal(514, sut.PC);
