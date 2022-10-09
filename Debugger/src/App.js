@@ -147,6 +147,10 @@ const App = () => {
         accept=".ch8"
         onChange={(e) => loadRom(e.target.files[0])}
       />
+      <button
+        onMouseDown={() => console.log('mouse down')}
+        onMouseUp={() => console.log('mouse up')}
+      >Test</button>
       <button onClick={startExecution} disabled={isExecuting}>
         Start
       </button>

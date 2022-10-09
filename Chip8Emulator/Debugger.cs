@@ -240,7 +240,7 @@ public class Debugger : IDebugger
             var (x, y) = instruction.MiddleTwoNibbles();
             var xHex = x.Hex();
 
-            _messages.Add($"[NOOP] - {instructionHex} - SKP V{xHex} - Skip next instruction if key with the value of V{xHex} is pressed.");
+            _messages.Add($"{instructionHex} - SKP V{xHex} - Skip next instruction if key with the value of V{xHex} is pressed.");
             return;
         }
         

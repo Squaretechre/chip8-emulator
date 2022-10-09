@@ -30,6 +30,25 @@ public class Chip8
     public int ST;
     private readonly Display _display;
 
+    public Dictionary<string, bool> Keys = new Dictionary<string, bool>()
+    {
+        {"1", false},
+        {"2", false}, 
+        {"3", false},
+        {"4", false}, 
+        {"5", false}, 
+        {"6", false}, 
+        {"7", false}, 
+        {"8", false}, 
+        {"9", false}, 
+        {"A", false}, 
+        {"B", false}, 
+        {"C", false}, 
+        {"D", false}, 
+        {"E", false}, 
+        {"F", false}, 
+    };
+
     public Chip8(
         int[] v, 
         int pc, 
@@ -60,6 +79,11 @@ public class Chip8
         _display.Clear();
         _debugger.Clear();
         _digitSprites.CopyTo(Memory);
+        
+        foreach (var (key, _) in Keys)
+        {
+            Keys[key] = false;
+        }
 
         rom.CopyTo(Memory, 512);
     }
@@ -265,6 +289,15 @@ public class Chip8
             _display.DrawSpriteAt(V[x], V[y], sprite);
         }
         
+        if (instruction.Matches("E.9E"))
+        {
+            var (upperByte, _) = instruction.UpperAndLowerBytes();
+
+            var x = upperByte.LowerNibble();
+
+            if (Keys[V[x].Hex()]) PC += 2;
+        }
+        
         if (instruction.Matches("F.15"))
         {
             var (upperByte, _) = instruction.UpperAndLowerBytes();
@@ -346,5 +379,15 @@ public class Chip8
         }
 
         PC += 2;
+    }
+
+    public void PressKey(string key)
+    {
+        Keys[key] = true;
+    }
+
+    public void ReleaseKey(string key)
+    {
+        Keys[key] = false;
     }
 }

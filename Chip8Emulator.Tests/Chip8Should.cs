@@ -133,6 +133,37 @@ public class Chip8Should
         sut.Step();
         sut.Step();
 
+        sut.PressKey("1");
+        sut.PressKey("2");
+        sut.PressKey("3");
+        sut.PressKey("4");
+        sut.PressKey("5");
+        sut.PressKey("6");
+        sut.PressKey("7");
+        sut.PressKey("8");
+        sut.PressKey("9");
+        sut.PressKey("A");
+        sut.PressKey("B");
+        sut.PressKey("C");
+        sut.PressKey("D");
+        sut.PressKey("E");
+        sut.PressKey("F");
+
+        Assert.True(sut.Keys["1"]);
+        Assert.True(sut.Keys["2"]);
+        Assert.True(sut.Keys["3"]);
+        Assert.True(sut.Keys["4"]);
+        Assert.True(sut.Keys["5"]);
+        Assert.True(sut.Keys["6"]);
+        Assert.True(sut.Keys["7"]);
+        Assert.True(sut.Keys["8"]);
+        Assert.True(sut.Keys["9"]);
+        Assert.True(sut.Keys["A"]);
+        Assert.True(sut.Keys["B"]);
+        Assert.True(sut.Keys["C"]);
+        Assert.True(sut.Keys["D"]);
+        Assert.True(sut.Keys["E"]);
+        Assert.True(sut.Keys["F"]);
         Assert.Equal(alienSprite[0], sut.V[0]);
         Assert.Equal(alienSprite[1], sut.V[1]);
         Assert.Equal(alienSprite[2], sut.V[2]);
@@ -162,6 +193,21 @@ public class Chip8Should
         new DigitSprites().CopyTo(expectedMemory);
         romBytes.CopyTo(expectedMemory, InitialProgramCounter);
 
+        Assert.False(sut.Keys["1"]);
+        Assert.False(sut.Keys["2"]);
+        Assert.False(sut.Keys["3"]);
+        Assert.False(sut.Keys["4"]);
+        Assert.False(sut.Keys["5"]);
+        Assert.False(sut.Keys["6"]);
+        Assert.False(sut.Keys["7"]);
+        Assert.False(sut.Keys["8"]);
+        Assert.False(sut.Keys["9"]);
+        Assert.False(sut.Keys["A"]);
+        Assert.False(sut.Keys["B"]);
+        Assert.False(sut.Keys["C"]);
+        Assert.False(sut.Keys["D"]);
+        Assert.False(sut.Keys["E"]);
+        Assert.False(sut.Keys["F"]);
         Assert.Equal(0, sut.I);
         Assert.Equal(InitialProgramCounter, sut.PC);
         Assert.True(sut.V.SequenceEqual(_emptyRegisters));
@@ -169,6 +215,40 @@ public class Chip8Should
         Assert.True(!sut.Stack.Any());
         Assert.Equal(DisplayTestData.ExpectedEmptyDisplay, sut.Display());
         Assert.Empty(debugger.GetMessages());
+    }
+
+    [Theory]
+    [InlineData("1")]
+    [InlineData("2")]
+    [InlineData("3")]
+    [InlineData("4")]
+    [InlineData("5")]
+    [InlineData("6")]
+    [InlineData("7")]
+    [InlineData("8")]
+    [InlineData("9")]
+    [InlineData("A")]
+    [InlineData("B")]
+    [InlineData("C")]
+    [InlineData("D")]
+    [InlineData("E")]
+    [InlineData("F")]
+    public void press_and_release_keys(string key)
+    {
+        var sut = new Chip8(
+            new int[16],
+            InitialProgramCounter,
+            _stubbedRandomNumber,
+            _debugger,
+            _dummyThread);
+        
+        sut.PressKey(key);
+        
+        Assert.True(sut.Keys[key]);
+
+        sut.ReleaseKey(key);
+        
+        Assert.False(sut.Keys[key]);
     }
 
     [Theory]
@@ -197,7 +277,7 @@ public class Chip8Should
     [InlineData("0xB23F", "B23F - JP V0, addr - Jump to location 575 + V0.")]
     [InlineData("0xC13B", "C13B - RND V1, byte - Set V1 = random byte AND 59.")]
     [InlineData("0xD426", "D426 - DRW V4, V2, nibble - Display 6-byte sprite starting at memory location I at (V4, V2), set VF = collision.")]
-    [InlineData("0xEA9E", "[NOOP] - EA9E - SKP VA - Skip next instruction if key with the value of VA is pressed.")]
+    [InlineData("0xEA9E", "EA9E - SKP VA - Skip next instruction if key with the value of VA is pressed.")]
     [InlineData("0xEBA1", "[NOOP] - EBA1 - SKNP VB - Skip next instruction if key with the value of VB is not pressed.")]
     [InlineData("0xFC07", "[NOOP] - FC07 - LD VC, DT - Set VC = delay timer value.")]
     [InlineData("0xF10A", "[NOOP] - F10A - LD V1, K - Wait for a key press, store the value of the key in V1.")]
@@ -212,13 +292,16 @@ public class Chip8Should
     {
         var debugger = new Debugger();
         var registers = new int[16];
-        
+
         var sut = new Chip8(
             registers,
             InitialProgramCounter,
             _stubbedRandomNumber,
             debugger,
             _dummyThread);
+        
+        registers[10] = 2;
+        sut.PressKey("2");
 
         var callSubroutineInstruction = Convert.ToInt16("0x2326", 16);
         
@@ -1185,6 +1268,55 @@ public class Chip8Should
         Assert.Equal(0, sut.V[13]);
         Assert.Equal(0, sut.V[14]);
         Assert.Equal(0, sut.V[15]);
+
+        Assert.Equal(514, sut.PC);
+    }
+    
+    [Fact(DisplayName = "Ex9E - SKP Vx - Skip next instruction if key with the value of Vx is pressed. When Vx is pressed.")]
+    public void skip_the_next_instruction_if_vx_is_pressed_when_processing_instruction_ex9e()
+    {
+        var registers = new int[16];
+
+        registers[1] = 2;
+
+        var skipNextInstructionIfVxIsPressed = Convert.ToInt16("0xE19E", 16);
+
+        var sut = new Chip8(
+            registers,
+            InitialProgramCounter,
+            _stubbedRandomNumber,
+            _debugger,
+            _dummyThread);
+
+        Assert.Equal(512, sut.PC);
+
+        sut.PressKey("2");
+        sut.Process(skipNextInstructionIfVxIsPressed);
+
+        Assert.Equal(516, sut.PC);
+    }
+    
+    [Fact(DisplayName = "Ex9E - SKP Vx - Skip next instruction if key with the value of Vx is pressed. When Vx is not pressed.")]
+    public void not_skip_the_next_instruction_if_vx_is_not_pressed_when_processing_instruction_ex9e()
+    {
+        var registers = new int[16];
+
+        registers[1] = 2;
+
+        var skipNextInstructionIfVxIsPressed = Convert.ToInt16("0xE19E", 16);
+
+        var sut = new Chip8(
+            registers,
+            InitialProgramCounter,
+            _stubbedRandomNumber,
+            _debugger,
+            _dummyThread);
+
+        Assert.Equal(512, sut.PC);
+
+        sut.PressKey("2");
+        sut.ReleaseKey("2");
+        sut.Process(skipNextInstructionIfVxIsPressed);
 
         Assert.Equal(514, sut.PC);
     }
