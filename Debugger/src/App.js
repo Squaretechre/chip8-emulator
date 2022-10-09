@@ -67,7 +67,7 @@ const Memory = ({ memory, pc }) => {
 const App = () => {
   const [chip8State, setChip8State] = useState(initialChip8State);
   const [isExecuting, setIsExecuting] = useState(false);
-  const [executionSpeed, setExecutionSpeed] = useState(10);
+  const [executionSpeed, setExecutionSpeed] = useState(100);
   const [loadedRom, setLoadedRom] = useState()
 
   useEffect(() => {

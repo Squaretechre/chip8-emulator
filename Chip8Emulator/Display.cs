@@ -4,12 +4,14 @@ namespace Chip8Emulator;
 
 public class Display
 {
+    private const int ScreenHeight = 32;
+    private const int ScreenWidth = 64;
     private readonly int[,] _display;
     private bool _pixelErased;
 
     public Display()
     {
-        _display = new int[32, 64];
+        _display = new int[ScreenHeight, ScreenWidth];
         _pixelErased = false;
         Clear();
     }
@@ -25,37 +27,33 @@ public class Display
 
     public void DrawSpriteAt(int x, int y, IEnumerable<byte> spriteBytes)
     {
-        try
-        {
-            _pixelErased = false;
+        _pixelErased = false;
         
-            var spriteRows = spriteBytes
-                .Select(@byte => new BitArray(new[] { @byte }))
-                .ToList();
+        var spriteRows = spriteBytes
+            .Select(@byte => new BitArray(new[] { @byte }))
+            .ToList();
         
-            var row = y;
+        var row = y;
 
-            foreach (var spriteRow in spriteRows)
-            {
-                var pixel = x;
+        foreach (var spriteRow in spriteRows)
+        {
+            var pixel = x;
             
-                for (var bit = 7; bit >= 0; bit--)
-                {
-                    var currentPixel = _display[row, pixel];
-                    var newPixel = Convert.ToInt32(currentPixel ^ Convert.ToInt32(spriteRow[bit]));
+            for (var bit = 7; bit >= 0; bit--)
+            {
+                var currentPixel = _display[row, pixel];
+                var newPixel = Convert.ToInt32(currentPixel ^ Convert.ToInt32(spriteRow[bit]));
                 
-                    if (currentPixel == 1 && newPixel == 0) _pixelErased = true;
+                if (currentPixel == 1 && newPixel == 0) _pixelErased = true;
 
-                    _display[row, pixel] = newPixel;
-                    pixel += 1;
-                }
+                _display[row, pixel] = newPixel;
+                
+                if (pixel == ScreenWidth - 1) pixel -= ScreenWidth;
 
-                row += 1;
+                pixel += 1;
             }
-        }
-        catch (Exception exception)
-        {
-            var message = exception.Message;
+
+            row += 1;
         }
     }
 
