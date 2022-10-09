@@ -1320,6 +1320,55 @@ public class Chip8Should
 
         Assert.Equal(514, sut.PC);
     }
+    
+    [Fact(DisplayName = "ExA1 - SKNP Vx - Skip next instruction if key with the value of Vx is not pressed. When Vx not pressed.")]
+    public void skip_the_next_instruction_if_vx_is_not_pressed_when_processing_instruction_exa1()
+    {
+        var registers = new int[16];
+
+        registers[1] = 2;
+
+        var skipNextInstructionIfVxIsPressed = Convert.ToInt16("0xE1A1", 16);
+
+        var sut = new Chip8(
+            registers,
+            InitialProgramCounter,
+            _stubbedRandomNumber,
+            _debugger,
+            _dummyThread);
+
+        Assert.Equal(512, sut.PC);
+
+        sut.PressKey("2");
+        sut.ReleaseKey("2");
+        sut.Process(skipNextInstructionIfVxIsPressed);
+
+        Assert.Equal(516, sut.PC);
+    }
+    
+    [Fact(DisplayName = "ExA1 - SKNP Vx - Skip next instruction if key with the value of Vx is not pressed. When Vx pressed.")]
+    public void not_skip_the_next_instruction_if_vx_is_pressed_when_processing_instruction_exa1()
+    {
+        var registers = new int[16];
+
+        registers[1] = 2;
+
+        var skipNextInstructionIfVxIsPressed = Convert.ToInt16("0xE1A1", 16);
+
+        var sut = new Chip8(
+            registers,
+            InitialProgramCounter,
+            _stubbedRandomNumber,
+            _debugger,
+            _dummyThread);
+
+        Assert.Equal(512, sut.PC);
+
+        sut.PressKey("2");
+        sut.Process(skipNextInstructionIfVxIsPressed);
+
+        Assert.Equal(514, sut.PC);
+    }
 
     [Fact(DisplayName = "Fx15 - LD DT, Vx - Set delay timer = Vx.")]
     public void start_delay_timer_when_it_is_a_value_above_zero_while_processing_instruction_fx15()

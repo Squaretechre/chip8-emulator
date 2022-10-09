@@ -298,6 +298,15 @@ public class Chip8
             if (Keys[V[x].Hex()]) PC += 2;
         }
         
+        if (instruction.Matches("E.A1"))
+        {
+            var (upperByte, _) = instruction.UpperAndLowerBytes();
+
+            var x = upperByte.LowerNibble();
+
+            if (Keys[V[x].Hex()] == false) PC += 2;
+        }
+        
         if (instruction.Matches("F.15"))
         {
             var (upperByte, _) = instruction.UpperAndLowerBytes();
